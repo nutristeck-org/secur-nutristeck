@@ -45,7 +45,7 @@ jobs:
           # Call Telegram setWebhook
           RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${FULL_WEBHOOK_URL}")
           echo "Received response from Telegram (content truncated for safety):"
-          echo "$RESPONSE" | jq -c '{ok, description}' 2>/dev/null || echo '{"ok":false,"description":"failed to parse response"}'
+          echo "$RESPONSE" | jq -c '{ok, description}' 2>/dev/null || echo "{\"ok\":false,\"description\":\"failed to parse response\"}"
 
           OK=$(echo "$RESPONSE" | jq -r '.ok' 2>/dev/null || echo "false")
           if [ "$OK" != "true" ]; then
