@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       webhook_url:
-        description: 'The public HTTPS URL for your webhook (eg. https://abc123.ngrok.io)'
+        description: 'The public HTTPS URL for your webhook (eg. https://abc123.ngrok.io) — do not include a trailing slash'
         required: true
         type: string
 
@@ -12,34 +12,45 @@ jobs:
   set-webhook:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate secrets
+      - name: Validate secrets and input
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_SECRET_TOKEN: ${{ secrets.TELEGRAM_SECRET_TOKEN }}
         run: |
           if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ] || [ -z "${{ secrets.TELEGRAM_SECRET_TOKEN }}" ]; then
-            echo "ERROR: TELEGRAM_BOT_TOKEN and TELEGRAM_SECRET_TOKEN must be set as repository secrets."; exit 1;
+            echo "ERROR: TELEGRAM_BOT_TOKEN and TELEGRAM_SECRET_TOKEN must be set as repository secrets."
+            exit 1
           fi
           if [ -z "${{ github.event.inputs.webhook_url }}" ]; then
-            echo "ERROR: webhook_url input is required."; exit 1;
+            echo "ERROR: webhook_url input is required."
+            exit 1
           fi
 
       - name: Install jq
         run: |
           sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Set Telegram webhook
+      - name: Set Telegram webhook (keeps secret path out of logs)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_SECRET_TOKEN: ${{ secrets.TELEGRAM_SECRET_TOKEN }}
         run: |
-          WEBHOOK_URL="${{ github.event.inputs.webhook_url }}/telegram-webhook/${{ secrets.TELEGRAM_SECRET_TOKEN }}"
-          echo "Setting Telegram webhook to: $WEBHOOK_URL"
-          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${WEBHOOK_URL}")
-          echo "Response: $RESPONSE"
+          # Show only the public host so logs are useful but do not reveal the secret path
+          WEBHOOK_HOST="${{ github.event.inputs.webhook_url }}"
+          echo "Setting Telegram webhook host: ${WEBHOOK_HOST} (webhook path hidden for security)"
+
+          # Build full URL for the API call but do NOT echo it
+          FULL_WEBHOOK_URL="${WEBHOOK_HOST}/telegram-webhook/${TELEGRAM_SECRET_TOKEN}"
+
+          # Call Telegram setWebhook
+          RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook?url=${FULL_WEBHOOK_URL}")
+          echo "Received response from Telegram (content truncated for safety):"
+          echo "$RESPONSE" | jq -c '{ok, description}' 2>/dev/null || echo '{"ok":false,"description":"failed to parse response"}'
 
           OK=$(echo "$RESPONSE" | jq -r '.ok' 2>/dev/null || echo "false")
           if [ "$OK" != "true" ]; then
-            echo "Failed to set webhook. Full response:"; echo "$RESPONSE"; exit 1
+            echo "Failed to set webhook. Full response (sensitive fields hidden):"
+            echo "$RESPONSE"
+            exit 1
           fi
           echo "Webhook set successfully."
