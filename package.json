@@ -1,0 +1,38 @@
+{
+  "name": "secur-nutristeck",
+  "version": "1.0.0",
+  "description": "NutriSteck Secure - Banking simulation web application with Telegram integration",
+  "main": "telegram-server.js",
+  "scripts": {
+    "start": "node telegram-server.js",
+    "dev": "node telegram-server.js",
+    "serve": "npx http-server -p 8080 .",
+    "lint": "eslint *.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "banking",
+    "telegram",
+    "simulation",
+    "nutristeck",
+    "secure"
+  ],
+  "author": "NutriSteck Organization",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nutristeck-org/secur-nutristeck.git"
+  }
+}
