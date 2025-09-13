@@ -71,30 +71,121 @@ function requireAdmin(req, res, next) {
 // User registration
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { username, email, password, firstName, lastName } = req.body;
+    const { 
+      // Personal Information
+      firstName, lastName, dateOfBirth, ssn,
+      // Contact Information  
+      email, phone, currentAddress, mailingAddress,
+      // Employment Information
+      employmentStatus, employer,
+      // Account Setup
+      accountType, initialDeposit,
+      // Account Security
+      username, password 
+    } = req.body;
     
-    if (!username || !email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'All fields are required' });
+    // Validate required fields
+    const requiredFields = [
+      'firstName', 'lastName', 'dateOfBirth', 'ssn',
+      'email', 'phone', 'currentAddress',
+      'employmentStatus', 'accountType', 'initialDeposit',
+      'username', 'password'
+    ];
+    
+    for (const field of requiredFields) {
+      if (!req.body[field]) {
+        return res.status(400).json({ error: `${field} is required` });
+      }
+    }
+    
+    // Validate SSN format
+    const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+    if (!ssnRegex.test(ssn)) {
+      return res.status(400).json({ error: 'Invalid SSN format. Use XXX-XX-XXXX' });
+    }
+    
+    // Validate phone format
+    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ error: 'Invalid phone format. Use (XXX) XXX-XXXX' });
+    }
+    
+    // Validate age (must be at least 18)
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (age < 18 || (age === 18 && monthDiff < 0) || (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return res.status(400).json({ error: 'You must be at least 18 years old to open an account' });
+    }
+    
+    // Validate initial deposit
+    if (parseFloat(initialDeposit) < 25) {
+      return res.status(400).json({ error: 'Initial deposit must be at least $25.00' });
+    }
+    
+    // Validate account type
+    if (!['checking', 'savings'].includes(accountType)) {
+      return res.status(400).json({ error: 'Invalid account type' });
+    }
+    
+    // Validate employment status and employer
+    const validEmploymentStatuses = ['employed', 'parttime', 'selfemployed', 'unemployed', 'retired', 'student', 'other'];
+    if (!validEmploymentStatuses.includes(employmentStatus)) {
+      return res.status(400).json({ error: 'Invalid employment status' });
+    }
+    
+    if (['employed', 'parttime', 'selfemployed'].includes(employmentStatus) && !employer) {
+      return res.status(400).json({ error: 'Employer is required for the selected employment status' });
     }
 
     const users = await readData('users.json');
     
-    // Check if user already exists
-    if (users[username] || Object.values(users).find(u => u.email === email)) {
-      return res.status(400).json({ error: 'User already exists' });
+    // Check if user already exists (by username, email, or SSN)
+    if (users[username]) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+    
+    const existingUser = Object.values(users).find(u => 
+      u.email === email || u.ssn === ssn
+    );
+    
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({ error: 'Email already registered' });
+      }
+      if (existingUser.ssn === ssn) {
+        return res.status(400).json({ error: 'SSN already registered' });
+      }
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Create user
+    // Create user with all banking information
     const user = {
       id: Date.now().toString(),
-      username,
-      email,
+      // Personal Information
       firstName,
       lastName,
+      dateOfBirth,
+      ssn,
+      // Contact Information
+      email,
+      phone,
+      currentAddress,
+      mailingAddress: mailingAddress || currentAddress,
+      // Employment Information
+      employmentStatus,
+      employer: employer || null,
+      // Account Setup
+      accountType,
+      initialDeposit: parseFloat(initialDeposit),
+      // Account Security
+      username,
       password: hashedPassword,
+      // System fields
       isAdmin: false,
       isActive: false, // Requires admin approval
       createdAt: new Date().toISOString(),
@@ -104,8 +195,9 @@ app.post('/api/auth/register', async (req, res) => {
     users[username] = user;
     await writeData('users.json', users);
     
-    // Don't return password
-    const { password: _, ...userResponse } = user;
+    // Don't return sensitive information
+    // eslint-disable-next-line no-unused-vars
+    const { password: _password, ssn: _ssn, ...userResponse } = user;
     res.status(201).json({ user: userResponse, message: 'Registration successful. Awaiting admin approval.' });
   } catch (error) {
     console.error('Registration error:', error);

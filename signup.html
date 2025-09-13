@@ -59,7 +59,7 @@
     }
     
     .container {
-      max-width: 500px;
+      max-width: 600px;
       margin: 40px auto;
       padding: 0 16px;
     }
@@ -98,7 +98,11 @@
     input[type="text"],
     input[type="email"],
     input[type="password"],
-    select {
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
       width: 100%;
       padding: 12px 16px;
       border: 2px solid #e5e7eb;
@@ -108,7 +112,8 @@
     }
     
     input:focus,
-    select:focus {
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: var(--green);
     }
@@ -117,6 +122,38 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+    
+    .form-section {
+      margin: 32px 0 24px 0;
+      padding: 24px 0 0 0;
+      border-top: 2px solid #f3f4f6;
+    }
+    
+    .form-section h3 {
+      margin: 0 0 16px 0;
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .form-section:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+    
+    small {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+      color: var(--muted);
     }
     
     .btn {
@@ -223,37 +260,117 @@
       <div id="alert" class="alert" style="display: none;"></div>
       
       <form id="signupForm">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" required>
+        <div class="form-section">
+          <h3>Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" required>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            </div>
+            <div class="form-group">
+              <label for="ssn">Social Security Number</label>
+              <input type="text" id="ssn" name="ssn" placeholder="XXX-XX-XXXX" maxlength="11" required>
+              <small>Format: XXX-XX-XXXX</small>
+            </div>
           </div>
         </div>
         
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" required>
+        <div class="form-section">
+          <h3>Contact Information</h3>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="currentAddress">Current Address</label>
+            <textarea id="currentAddress" name="currentAddress" placeholder="Street address, City, State, ZIP code" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="mailingAddress">Mailing Address</label>
+            <textarea id="mailingAddress" name="mailingAddress" placeholder="Street address, City, State, ZIP code (leave blank if same as current address)"></textarea>
+            <small>Leave blank if same as current address</small>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label for="username">Choose Username</label>
-          <input type="text" id="username" name="username" required>
-          <small style="color: var(--muted); font-size: 14px;">This will be your login username</small>
+        <div class="form-section">
+          <h3>Employment Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="employmentStatus">Employment Status</label>
+              <select id="employmentStatus" name="employmentStatus" required>
+                <option value="">Select Employment Status</option>
+                <option value="employed">Employed Full-Time</option>
+                <option value="parttime">Employed Part-Time</option>
+                <option value="selfemployed">Self-Employed</option>
+                <option value="unemployed">Unemployed</option>
+                <option value="retired">Retired</option>
+                <option value="student">Student</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="employer">Employer</label>
+              <input type="text" id="employer" name="employer" placeholder="Company name (if applicable)">
+              <small>Required if employed</small>
+            </div>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
-          <small style="color: var(--muted); font-size: 14px;">Must be at least 8 characters</small>
+        <div class="form-section">
+          <h3>Account Setup</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="accountType">Account Type</label>
+              <select id="accountType" name="accountType" required>
+                <option value="">Select Account Type</option>
+                <option value="checking">Checking Account</option>
+                <option value="savings">Savings Account</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="initialDeposit">Initial Deposit Amount</label>
+              <input type="number" id="initialDeposit" name="initialDeposit" min="25" step="0.01" placeholder="25.00" required>
+              <small>Minimum $25.00 required</small>
+            </div>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <div class="form-section">
+          <h3>Account Security</h3>
+          <div class="form-group">
+            <label for="username">Choose Username</label>
+            <input type="text" id="username" name="username" required>
+            <small>This will be your login username</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <small>Must be at least 8 characters</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+          </div>
         </div>
         
         <button type="submit" class="btn" id="submitBtn">Create Account</button>
@@ -283,6 +400,38 @@
   <script>
     const API_BASE = window.location.origin;
     
+    // Format SSN input
+    document.getElementById('ssn').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 6) {
+        value = value.substring(0, 3) + '-' + value.substring(3, 5) + '-' + value.substring(5, 9);
+      } else if (value.length >= 3) {
+        value = value.substring(0, 3) + '-' + value.substring(3);
+      }
+      e.target.value = value;
+    });
+    
+    // Format phone input
+    document.getElementById('phone').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 6) {
+        value = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6, 10);
+      } else if (value.length >= 3) {
+        value = '(' + value.substring(0, 3) + ') ' + value.substring(3);
+      }
+      e.target.value = value;
+    });
+    
+    // Employment status change handler
+    document.getElementById('employmentStatus').addEventListener('change', function(e) {
+      const employerField = document.getElementById('employer');
+      const isEmployed = ['employed', 'parttime', 'selfemployed'].includes(e.target.value);
+      employerField.required = isEmployed;
+      if (!isEmployed) {
+        employerField.value = '';
+      }
+    });
+    
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -300,6 +449,50 @@
         return;
       }
       
+      // Validate SSN format
+      const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+      if (!ssnRegex.test(data.ssn)) {
+        showAlert('Please enter a valid SSN in format XXX-XX-XXXX', 'error');
+        return;
+      }
+      
+      // Validate phone format
+      const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+      if (!phoneRegex.test(data.phone)) {
+        showAlert('Please enter a valid phone number in format (XXX) XXX-XXXX', 'error');
+        return;
+      }
+      
+      // Validate age (must be at least 18)
+      const birthDate = new Date(data.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (age < 18 || (age === 18 && monthDiff < 0) || (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        showAlert('You must be at least 18 years old to open an account', 'error');
+        return;
+      }
+      
+      // Validate initial deposit
+      const initialDeposit = parseFloat(data.initialDeposit);
+      if (initialDeposit < 25) {
+        showAlert('Initial deposit must be at least $25.00', 'error');
+        return;
+      }
+      
+      // Validate employer field if employed
+      const employmentStatus = data.employmentStatus;
+      if (['employed', 'parttime', 'selfemployed'].includes(employmentStatus) && !data.employer.trim()) {
+        showAlert('Employer is required for the selected employment status', 'error');
+        return;
+      }
+      
+      // Set mailing address to current address if not provided
+      if (!data.mailingAddress.trim()) {
+        data.mailingAddress = data.currentAddress;
+      }
+      
       const submitBtn = document.getElementById('submitBtn');
       const loading = document.getElementById('loading');
       
@@ -313,11 +506,29 @@
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            username: data.username,
-            email: data.email,
-            password: data.password,
+            // Personal Information
             firstName: data.firstName,
-            lastName: data.lastName
+            lastName: data.lastName,
+            dateOfBirth: data.dateOfBirth,
+            ssn: data.ssn,
+            
+            // Contact Information
+            email: data.email,
+            phone: data.phone,
+            currentAddress: data.currentAddress,
+            mailingAddress: data.mailingAddress,
+            
+            // Employment Information
+            employmentStatus: data.employmentStatus,
+            employer: data.employer || null,
+            
+            // Account Setup
+            accountType: data.accountType,
+            initialDeposit: parseFloat(data.initialDeposit),
+            
+            // Account Security
+            username: data.username,
+            password: data.password
           })
         });
         
