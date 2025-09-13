@@ -179,6 +179,11 @@
       window.location.href='login.html'; 
     }
 
+    // API configuration - in production this would be environment-specific
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://127.0.0.1:3001' 
+      : '';
+
     const CRYPTO_NETWORKS = {
       'BTC': [{ value: 'BTC', label: 'Bitcoin Network' }],
       'BNB': [{ value: 'BSC', label: 'BNB Smart Chain (BSC)' }],
@@ -232,7 +237,7 @@
       }
 
       try {
-        const response = await fetch('/api/admin/wallet', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/wallet`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -260,7 +265,7 @@
       }
 
       try {
-        const response = await fetch('/api/admin/wallet/' + editingWalletId, {
+        const response = await fetch(`${API_BASE_URL}/api/admin/wallet/${editingWalletId}`, {
           method: 'DELETE',
           headers: { 'x-admin-user': currentUser }
         });
@@ -304,7 +309,7 @@
 
     async function loadWallets() {
       try {
-        const response = await fetch('/api/admin/wallets', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/wallets`, {
           headers: { 'x-admin-user': currentUser }
         });
 
@@ -343,7 +348,7 @@
 
     async function loadPendingDeposits() {
       try {
-        const response = await fetch('/api/admin/deposits/pending', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/deposits/pending`, {
           headers: { 'x-admin-user': currentUser }
         });
 
@@ -393,7 +398,7 @@
 
     async function updateDepositStatus(depositId, status, reason = '') {
       try {
-        const response = await fetch('/api/admin/deposit/status', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/deposit/status`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -422,7 +427,7 @@
 
     async function loadAllDeposits() {
       try {
-        const response = await fetch('/api/admin/deposits/all', {
+        const response = await fetch(`${API_BASE_URL}/api/admin/deposits/all`, {
           headers: { 'x-admin-user': currentUser }
         });
 
@@ -481,7 +486,7 @@
 
       try {
         for (const wallet of demoWallets) {
-          await fetch('/api/admin/wallet', {
+          await fetch(`${API_BASE_URL}/api/admin/wallet`, {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',

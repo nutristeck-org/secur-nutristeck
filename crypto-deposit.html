@@ -167,6 +167,11 @@
     // Check authentication
     if(sessionStorage.getItem('rb_auth') !== '1'){ window.location.href='login.html'; }
 
+    // API configuration - in production this would be environment-specific
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://127.0.0.1:3001' 
+      : '';
+
     const CRYPTO_NETWORKS = {
       'BTC': [
         { value: 'BTC', label: 'Bitcoin Network', info: 'Send only Bitcoin (BTC) to this address' }
@@ -252,7 +257,7 @@
 
     async function loadWalletAddress() {
       try {
-        const response = await fetch('/api/crypto/wallet', {
+        const response = await fetch(`${API_BASE_URL}/api/crypto/wallet`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
@@ -324,7 +329,7 @@
       const note = document.getElementById('depositNote').value;
 
       try {
-        const response = await fetch('/api/crypto/deposit', {
+        const response = await fetch(`${API_BASE_URL}/api/crypto/deposit`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -365,7 +370,7 @@
 
     async function loadDeposits() {
       try {
-        const response = await fetch('/api/crypto/deposits', {
+        const response = await fetch(`${API_BASE_URL}/api/crypto/deposits`, {
           headers: { 'x-user': sessionStorage.getItem('rb_user') || 'Member' }
         });
 
