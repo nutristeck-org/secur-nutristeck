@@ -1,5 +1,11 @@
 node_modules/
 .env
-.DS_Store
+.env.local
+.env.development
 data/
+logs/
 *.log
+dist/
+coverage/
+.DS_Store
+Thumbs.db
