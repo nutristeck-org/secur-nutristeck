@@ -423,41 +423,85 @@
         </div>
       </div>
 
-      <!-- Recent Transactions -->
-      <div class="card">
-        <h2>Recent Transactions</h2>
-        <div id="transactionsLoading" class="loading">Loading transaction history...</div>
-        <div id="transactionsEmpty" class="empty-state" style="display: none;">
-          <h3>No transactions yet</h3>
-          <p>Your transaction history will appear here once you start banking with us.</p>
-          <button class="btn btn-primary" onclick="showComingSoon('Funding')">Make Your First Deposit</button>
-        </div>
-        <div id="transactionsTable" style="display: none;">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody id="transactionsList">
-            </tbody>
-          </table>
-        </div>
+<!-- Recent Transactions -->
+<div class="card">
+  <h2>Recent Transactions</h2>
+  <div id="transactionsLoading" class="loading">Loading transaction history...</div>
+  <div id="transactionsEmpty" class="empty-state" style="display: none;">
+    <h3>No transactions yet</h3>
+    <p>Your transaction history will appear here once you start banking with us.</p>
+    <button class="btn btn-primary" onclick="showComingSoon('Funding')">Make Your First Deposit</button>
+  </div>
+  <div id="transactionsTable" style="display: none;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="transactionsList">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="margin-top:18px">
+  <h3>Banking Services</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:12px 0">
+    <a href="crypto-deposit.html" style="display:block;background:#e0f2fe;color:#0369a1;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      💎 Crypto Deposit
+    </a>
+    <a href="zelle.html" style="display:block;background:#ecfdf5;color:#059669;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      📱 Zelle
+    </a>
+    <a href="mobile-deposit.html" style="display:block;background:#fef3cd;color:#d97706;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      📷 Mobile Deposit
+    </a>
+    <a href="bill-pay.html" style="display:block;background:#f3e8ff;color:#7c3aed;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      💳 Bill Pay
+    </a>
+  </div>
+</div>
+
+<div style="margin-top:12px">
+  <button id="connectTelegram">Connect Telegram</button>
+</div>
       </div>
     </div>
   </div>
 
   <script>
-    const API_BASE = window.location.origin;
-    let currentUser = null;
+const API_BASE = window.location.origin;
+let currentUser = null;
 
-    // Initialize dashboard
-    document.addEventListener('DOMContentLoaded', async () => {
-      await checkAuth();
-      await loadDashboardData();
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', async () => {
+  // Use modular auth/data loading if present, else fallback to inline logic
+  if (typeof checkAuth === "function") await checkAuth();
+  if (typeof loadDashboardData === "function") await loadDashboardData();
+
+  // Inline fallback logic (if not modularized)
+  if (!window.checkAuth || !window.loadDashboardData) {
+    if(sessionStorage.getItem('rb_auth') !== '1'){ window.location.href='login.html'; }
+    const user = sessionStorage.getItem('rb_user') || 'Member';
+    document.getElementById('username').textContent = user;
+    const tx = [250,200.5,150,300.25,120,180,210.75,95];
+    let total=0; const txList=document.getElementById('txList');
+    tx.forEach((v,i)=>{ total+=v; const tr=document.createElement('tr'); tr.innerHTML=`<td>2025-0${8-i%8}-01</td><td>Member stock earnings</td><td class='credit'>$${v.toFixed(2)}</td>`; txList.appendChild(tr); });
+    document.getElementById('balance').textContent = '$' + total.toFixed(2);
+  }
+
+  // Show admin panel link for admin users
+  const user = sessionStorage.getItem('rb_user') || 'Member';
+  const adminUsers = ['admin', 'Lowkeyrich1413'];
+  if (adminUsers.includes(user)) {
+    const adminLink = document.createElement('div');
+    adminLink.style.marginTop = '16px';
+    adminLink.innerHTML = '<a href="admin-crypto.html" style="color:#dc2626;font-weight:600;text-decoration:none
+
     });
 
     async function checkAuth() {

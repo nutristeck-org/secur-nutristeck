@@ -7,6 +7,11 @@ This repository contains a comprehensive banking simulation web application demo
 - **Secure Login System**: Multi-factor authentication with User ID, Password, and PIN
 - **Dashboard**: Real-time account balance and transaction history display
 - **Banking Services**: Zelle transfers, mobile deposit, and bill pay interfaces
+- **Cryptocurrency Deposits**: Multi-coin deposit system with admin management
+  - Support for BTC, BNB, ETH, TRX, SOL, USDT (multiple networks), USDC (multiple networks)
+  - QR code generation for wallet addresses
+  - Admin approval workflow with status tracking
+  - Network-specific warnings and instructions
 - **Telegram Integration**: Webhook server for account notifications and linking
 - **Responsive Design**: Mobile-first design that works across all devices
 - **Accessibility**: ARIA labels and keyboard navigation support
@@ -20,9 +25,11 @@ This repository contains a comprehensive banking simulation web application demo
 - `zelle.html` - Money transfer interface
 - `mobile-deposit.html` - Check deposit simulation
 - `bill-pay.html` - Bill payment interface
+- `crypto-deposit.html` - Cryptocurrency deposit interface
+- `admin-crypto.html` - Admin crypto wallet management
 
 ### Backend Components:
-- `telegram-server.js` - Express webhook server for Telegram integration
+- `telegram-server.js` - Express webhook server for Telegram integration and crypto deposit APIs
 - `app.js` - Main client-side JavaScript
 - `styles.css` - Global styling and responsive design
 
@@ -97,6 +104,31 @@ The application is fully responsive and tested on:
 2. Get your bot token and add it to `.env`
 3. Set up webhook URL: `https://yourdomain.com/telegram-webhook/{SECRET_TOKEN}`
 4. Users can link accounts via deep links generated in the dashboard
+
+## 💎 Cryptocurrency Deposits
+
+### User Features:
+- Multi-coin support: Bitcoin (BTC), Binance Coin (BNB), Ethereum (ERC20), TRON (TRC20), Solana (SOL)
+- Multi-network USDT: BEP20, ERC20, TRC20, SOL-USDT
+- Multi-network USDC: BEP20, ERC20, SOL-USDC
+- QR code generation for easy mobile wallet scanning
+- Real-time deposit status tracking (Pending → Approved/Rejected)
+- Network-specific warnings to prevent user errors
+
+### Admin Features:
+- Wallet address management for all supported coins/networks
+- Deposit approval/rejection workflow
+- Comprehensive audit logging
+- Demo wallet quick-loading for testing
+- Real-time pending deposit monitoring
+
+### API Endpoints:
+- `POST /api/crypto/wallet` - Get wallet address for coin/network
+- `POST /api/crypto/deposit` - Submit crypto deposit  
+- `GET /api/crypto/deposits` - Get user's deposit history
+- `POST /api/admin/wallet` - Admin: Create/update wallet
+- `GET /api/admin/wallets` - Admin: List all wallets
+- `POST /api/admin/deposit/status` - Admin: Approve/reject deposit
 
 ## ⚠️ Security Notes
 
