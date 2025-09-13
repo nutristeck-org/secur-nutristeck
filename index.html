@@ -1,26 +1,361 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>NutriSteck — Secure</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NutriSteck Secure Banking for All - Professional banking services with advanced security and personalized financial solutions">
+  <meta name="keywords" content="banking, secure banking, financial services, nutristeck, online banking">
+  <meta name="author" content="NutriSteck Organization">
+  <title>NutriSteck Secure Banking for All</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Landing page specific styles */
+    .hero {
+      background: linear-gradient(135deg, #124e2a 0%, #0f6b3b 100%);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    
+    .hero .tagline {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background: #d4b03f;
+      color: #06211a;
+    }
+    
+    .btn-primary:hover {
+      background: #b8951c;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .btn-secondary:hover {
+      background: white;
+      color: #124e2a;
+    }
+    
+    .features {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .features h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: #124e2a;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .feature-card .icon {
+      width: 64px;
+      height: 64px;
+      background: #124e2a;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+    
+    .feature-card h3 {
+      color: #124e2a;
+      margin-bottom: 1rem;
+    }
+    
+    .services {
+      background: #f7f3e9;
+      padding: 80px 20px;
+    }
+    
+    .services-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .services h2 {
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: #124e2a;
+    }
+    
+    .services-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .service-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .cta {
+      background: #124e2a;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    
+    .cta h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .navbar {
+      background: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #124e2a;
+      text-decoration: none;
+    }
+    
+    .navbar-nav {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    .navbar-nav a {
+      color: #124e2a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .navbar-nav a:hover {
+      color: #0f6b3b;
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero .tagline {
+        font-size: 1.2rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .navbar-nav {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="assets/logo.svg" alt="NutriSteck logo" class="logo">
-    <h1>NutriSteck Secure</h1>
-  </header>
-  <nav>
-    <a href="dashboard.html">Dashboard</a> |
-    <a href="zelle.html">Zelle</a> |
-    <a href="mobile-deposit.html">Mobile Deposit</a> |
-    <a href="bill-pay.html">Bill Pay</a>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/" class="navbar-brand">
+        <img src="assets/logo.svg" alt="NutriSteck Secure Banking" width="40" height="40">
+        <span>NutriSteck Secure</span>
+      </a>
+      <div class="navbar-nav">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="login.html">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Join Now</a>
+      </div>
+    </div>
   </nav>
-  <main>
-    <h2>Welcome</h2>
-    <p>This is a static placeholder site assembled for the secure-nutristeck repository.</p>
-  </main>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <img src="assets/logo.svg" alt="NutriSteck Secure Banking for All" width="120" height="120" style="margin-bottom: 2rem;">
+      <h1>NutriSteck Secure Banking</h1>
+      <p class="tagline">Secure Banking for All</p>
+      <p style="font-size: 1.1rem; margin-bottom: 3rem; opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Experience the future of banking with advanced security, personalized service, and comprehensive financial solutions designed for your success.
+      </p>
+      <div class="hero-buttons">
+        <a href="login.html" class="btn btn-primary">Use Online Banking</a>
+        <a href="signup.html" class="btn btn-secondary">Become a Member</a>
+        <a href="#services" class="btn btn-secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2>Why Choose NutriSteck Secure?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🔒</div>
+        <h3>Advanced Security</h3>
+        <p>Bank-grade encryption and multi-factor authentication protect your financial data with the highest level of security available.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h3>Smart Banking</h3>
+        <p>Intelligent financial tools and personalized insights help you make informed decisions and achieve your financial goals.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📱</div>
+        <h3>Mobile First</h3>
+        <p>Access your accounts anywhere, anytime with our responsive design that works seamlessly across all devices.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤝</div>
+        <h3>Personal Service</h3>
+        <p>Dedicated support team and personalized account management ensure you receive the attention you deserve.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⚡</div>
+        <h3>Fast Transfers</h3>
+        <p>Instant member-to-member transfers and quick external payments with real-time notifications and confirmations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>Transparent</h3>
+        <p>Clear fee structure, detailed transaction history, and comprehensive reporting keep you informed every step of the way.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services" id="services">
+    <div class="services-content">
+      <h2>Our Banking Services</h2>
+      <div class="services-list">
+        <div class="service-item">
+          <h3>Checking Accounts</h3>
+          <p>Feature-rich checking with no minimum balance and unlimited transactions</p>
+        </div>
+        <div class="service-item">
+          <h3>Savings Accounts</h3>
+          <p>High-yield savings with competitive interest rates and flexible access</p>
+        </div>
+        <div class="service-item">
+          <h3>IRA Accounts</h3>
+          <p>Retirement planning made simple with traditional and Roth IRA options</p>
+        </div>
+        <div class="service-item">
+          <h3>Digital Payments</h3>
+          <p>Zelle, bill pay, mobile deposit, and wire transfers at your fingertips</p>
+        </div>
+        <div class="service-item">
+          <h3>Account Linking</h3>
+          <p>Connect external accounts for easy funding and comprehensive financial overview</p>
+        </div>
+        <div class="service-item">
+          <h3>24/7 Support</h3>
+          <p>Round-the-clock customer service and instant notifications via Telegram</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta" id="about">
+    <div class="container">
+      <h2>Ready to Experience Better Banking?</h2>
+      <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+        Join thousands of satisfied members who trust NutriSteck Secure Banking for their financial needs.
+      </p>
+      <div class="hero-buttons">
+        <a href="signup.html" class="btn btn-primary">Open Your Account Today</a>
+        <a href="login.html" class="btn btn-secondary">Sign In to Existing Account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: #06211a; color: white; padding: 40px 20px; text-align: center;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 2rem;">
+        <img src="assets/logo.svg" alt="NutriSteck Logo" width="32" height="32">
+        <span style="font-weight: 700; font-size: 1.2rem;">NutriSteck Secure Banking for All</span>
+      </div>
+      <p style="opacity: 0.8; margin-bottom: 1rem;">
+        Professional banking services with advanced security and personalized solutions.
+      </p>
+      <p style="opacity: 0.6; font-size: 0.9rem;">
+        © 2025 NutriSteck Organization. All rights reserved. | FDIC Insured | Equal Opportunity Lender
+      </p>
+    </div>
+  </footer>
+
   <script src="app.js"></script>
 </body>
 </html>

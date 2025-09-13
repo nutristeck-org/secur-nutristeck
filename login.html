@@ -1,118 +1,434 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="NutriSteck Secure Banking Platform - Demo login page for secure financial services simulation" />
-  <meta name="keywords" content="nutristeck, secure banking, financial platform, demo" />
+  <meta name="description" content="NutriSteck Secure Banking Platform - Sign in to access your account and banking services" />
+  <meta name="keywords" content="nutristeck, secure banking, financial platform, login" />
   <meta name="author" content="NutriSteck Organization" />
-  <title>NutriSteck Secure — Sign On</title>
+  <title>NutriSteck Secure Banking — Sign In</title>
   <style>
-    :root{--green:#124e2a;--panel:#0f6b3b;--cream:#f7f3e9;--muted:#6b7280;--accent:#d4b03f}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#f1f5f3;color:#05201a}
-    .topbar{background:var(--green);padding:14px 16px;color:#fff;display:flex;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand .logo{width:36px;height:36px;border-radius:6px;background:#0b3a1f;display:flex;align-items:center;justify-content:center;font-weight:700}
-    .hero{background:linear-gradient(180deg,var(--panel),#115f31);color:#fff;border-radius:12px;margin:16px;padding:18px;max-width:1000px;box-shadow:0 6px 20px rgba(10,40,20,0.06)}
-    .hero h1{margin:0 0 6px;font-size:18px}
-    .hero p{margin:0 0 10px;color:#e8f3ea}
-    .creds{background:rgba(255,255,255,0.06);padding:12px;border-radius:8px;margin-top:8px}
-    .creds li{margin:8px 0}
-    .container{max-width:980px;margin:0 auto;padding:0 14px 60px}
-    .card{background:#fff;border-radius:10px;padding:16px;margin-top:16px;box-shadow:0 6px 18px rgba(10,20,12,0.04)}
-    form{display:block}
-    label{display:block;font-weight:700;margin:12px 0 6px}
-    input{width:100%;padding:12px;border-radius:8px;border:1px solid #e6e9ef;font-size:15px}
-    .row{display:flex;gap:12px}
-    .btn{background:var(--green);color:#fff;padding:10px 14px;border-radius:22px;border:none;cursor:pointer}
-    .btn.secondary{background:#fff;border:2px solid var(--green);color:var(--green)}
-    .links{display:flex;gap:12px;margin-top:12px;font-size:13px;color:var(--green)}
-    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
-    .support{position:fixed;right:16px;bottom:18px;background:var(--accent);color:#06211a;padding:8px 12px;border-radius:999px;box-shadow:0 6px 18px rgba(11,20,12,0.12)}
-    @media(min-width:900px){.grid{display:grid;grid-template-columns:1fr 420px;gap:18px}.card.form{padding:20px}}
+    :root {
+      --green: #124e2a;
+      --panel: #0f6b3b;
+      --cream: #f7f3e9;
+      --muted: #6b7280;
+      --accent: #d4b03f;
+      --error: #dc2626;
+      --success: #059669;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: #f1f5f3;
+      color: #05201a;
+    }
+    
+    .topbar {
+      background: var(--green);
+      color: white;
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.2rem;
+    }
+    
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: #d4b03f;
+      color: #06211a;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(11, 20, 12, 0.12);
+    }
+    
+    .hero {
+      background: var(--panel);
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      margin: 0 0 1rem;
+      font-weight: 700;
+    }
+    
+    .hero p {
+      font-size: 1.1rem;
+      margin: 0 0 2rem;
+      opacity: 0.9;
+      max-width: 500px;
+    }
+    
+    .form h2 {
+      margin: 0 0 24px;
+      font-size: 1.8rem;
+      color: var(--green);
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--green);
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--panel);
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn:disabled {
+      background: var(--muted);
+      color: white;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .links {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+    
+    .links a {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .links a:hover {
+      text-decoration: underline;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    
+    .alert-error {
+      background: #fee2e2;
+      color: var(--error);
+      border: 1px solid #fecaca;
+    }
+    
+    .alert-success {
+      background: #dcfce7;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+    
+    .alert-info {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+    }
+    
+    .support {
+      position: fixed;
+      right: 16px;
+      bottom: 18px;
+      background: var(--accent);
+      color: #06211a;
+      padding: 8px 12px;
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(11, 20, 12, 0.12);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr 420px;
+        gap: 24px;
+      }
+      
+      .card.form {
+        padding: 32px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="topbar">
-    <div class="brand"><div class="logo">N</div><div style="font-weight:700">NutriSteck Secure</div></div>
+    <div class="brand">
+      <div class="logo">N</div>
+      <div style="font-weight: 700;">NutriSteck Secure Banking for All</div>
+    </div>
   </div>
 
   <div class="container">
-    <section class="hero">
-      <h1>Welcome to NutriSteck Secure Banking Platform</h1>
-      <p>Use the sample credentials to sign on and explore the dashboard. This is a simulation environment.</p>
-      <div class="creds" aria-live="polite">
-        <ul style="margin:0;padding-left:18px;color:#fff">
-          <li><strong>User ID:</strong> <span id="sampleUser">Lowkeyrich1413</span></li>
-          <li><strong>Password:</strong> <span id="samplePass">$SlimYellow1</span></li>
-          <li><strong>PIN:</strong> <span id="samplePin">1234</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="card form">
-      <h2 style="margin:0 0 6px">Sign On</h2>
-      <form id="loginForm" autocomplete="on" role="form" aria-label="Sign on form">
-        <label for="userid">User ID</label>
-        <input id="userid" name="userid" type="text" placeholder="User ID" autocomplete="username" required aria-describedby="userid-help" />
-
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Password" autocomplete="current-password" required aria-describedby="password-help" />
-
-        <label for="pin">PIN</label>
-        <input id="pin" name="pin" type="password" inputmode="numeric" pattern="\d*" placeholder="4-digit PIN" required aria-describedby="pin-help" />
-
-        <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
-          <button class="btn" id="signBtn" type="submit">Sign On</button>
-          <button class="btn secondary" id="clearBtn" type="button">Clear</button>
+    <div class="grid">
+      <section class="card hero">
+        <img src="assets/logo.svg" alt="NutriSteck Secure Banking for All" width="80" height="80" style="margin-bottom: 1.5rem;">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your NutriSteck Secure Banking account to access your dashboard, manage your finances, and explore our comprehensive banking services.</p>
+        <div style="margin-top: 2rem;">
+          <a href="signup.html" class="btn btn-secondary">New Member? Join Now</a>
+          <a href="index.html" class="btn btn-secondary" style="margin-left: 12px;">← Back to Home</a>
         </div>
+      </section>
 
-        <div class="links">
-          <a href="#" onclick="alert('Forgot User ID feature not implemented in this demo'); return false;">Forgot User ID?</a>
-          <a href="#" onclick="alert('Forgot Password feature not implemented in this demo'); return false;">Forgot Password?</a>
-          <a href="#" onclick="alert('Enrollment feature not implemented in this demo'); return false;">Enroll</a>
-        </div>
+      <section class="card form">
+        <h2>Sign In</h2>
+        
+        <div id="alert" class="alert" style="display: none;"></div>
+        
+        <form id="loginForm" autocomplete="on" role="form" aria-label="Sign in form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Enter your username" autocomplete="username" required aria-describedby="username-help" />
+          </div>
 
-        <p id="error" style="color:#b91c1c;display:none;margin-top:10px">Invalid credentials. Make sure you used the sample User ID, Password and PIN.</p>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required aria-describedby="password-help" />
+          </div>
 
-        <div style="margin-top:12px">
-          <button id="connectTelegram" type="button" style="background:#fff;border:2px solid var(--green);color:var(--green);padding:8px 12px;border-radius:8px;cursor:pointer">Connect Telegram</button>
-          <small style="display:block;margin-top:6px;color:var(--muted)">Click to generate a link you can open in Telegram to link your account (backend required).</small>
-        </div>
-      </form>
-    </section>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="signBtn" type="submit">Sign In</button>
+            <button class="btn btn-secondary" id="clearBtn" type="button">Clear</button>
+          </div>
 
-    <footer>© 2025 NutriSteck Secure Platform — Demo Environment</footer>
+          <div class="links">
+            <a href="#" onclick="showAlert('Password reset functionality will be available soon', 'info'); return false;">Forgot Password?</a>
+            <a href="signup.html">Create Account</a>
+            <a href="#" onclick="showAlert('Contact support for assistance', 'info'); return false;">Need Help?</a>
+          </div>
+          
+          <div class="loading" id="loading">
+            Signing you in...
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <footer style="text-align: center; margin-top: 40px; color: var(--muted);">
+      © 2025 NutriSteck Secure Banking Platform — Professional Banking Services
+    </footer>
   </div>
 
-  <a class="support" href="#" onclick="alert('Support feature not implemented in this demo. This is a simulation environment.'); return false;">Support</a>
+  <a class="support" href="#" onclick="showAlert('Support chat will be available soon. Please contact admin for assistance.', 'info'); return false;">Support</a>
 
   <script>
-    // client-side demo only — do not use for real auth
-    const SAMPLE = {user:'Lowkeyrich1413', pass:'$SlimYellow1', pin:'1234'};
-    document.getElementById('loginForm').addEventListener('submit', function(e){
+    const API_BASE = window.location.origin;
+    
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const u = document.getElementById('userid').value.trim();
-      const p = document.getElementById('password').value;
-      const pin = document.getElementById('pin').value;
-      if(u === SAMPLE.user && p === SAMPLE.pass && pin === SAMPLE.pin){
-        sessionStorage.setItem('rb_auth','1');
-        sessionStorage.setItem('rb_user', u);
-        // create a demo link code for Telegram deep link (in production, get from backend)
-        sessionStorage.setItem('link_code', 'user-'+Math.random().toString(36).slice(2,10));
-        window.location.href = 'dashboard.html';
-      } else {
-        document.getElementById('error').style.display = 'block';
+      
+      const formData = new FormData(e.target);
+      const username = formData.get('username').trim();
+      const password = formData.get('password');
+      
+      if (!username || !password) {
+        showAlert('Please enter both username and password', 'error');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('signBtn');
+      const loading = document.getElementById('loading');
+      
+      submitBtn.disabled = true;
+      loading.style.display = 'block';
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // Store authentication token and user info
+          localStorage.setItem('authToken', result.token);
+          localStorage.setItem('userInfo', JSON.stringify(result.user));
+          
+          showAlert('Login successful! Redirecting to dashboard...', 'success');
+          
+          setTimeout(() => {
+            // Redirect to admin dashboard if admin, otherwise user dashboard
+            if (result.user.isAdmin) {
+              window.location.href = 'admin.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 1000);
+        } else {
+          showAlert(result.error || 'Login failed. Please check your credentials.', 'error');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showAlert('Network error. Please check your connection and try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        loading.style.display = 'none';
       }
     });
-    document.getElementById('clearBtn').addEventListener('click', function(){ document.getElementById('userid').value=''; document.getElementById('password').value=''; document.getElementById('pin').value=''; document.getElementById('error').style.display='none'; });
 
-    // Connect Telegram: opens t.me deep link with code stored in session (dashboard will show real link after login)
-    document.getElementById('connectTelegram').addEventListener('click', function(){
-      const code = sessionStorage.getItem('link_code') || 'demo-code-1234';
-      const botUsername = 'my_bot_Trenchp1413bot';
-      const url = `https://t.me/${botUsername}?start=${encodeURIComponent(code)}`;
-      window.open(url, '_blank');
+    document.getElementById('clearBtn').addEventListener('click', function() {
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      hideAlert();
+    });
+    
+    function showAlert(message, type) {
+      const alert = document.getElementById('alert');
+      alert.textContent = message;
+      alert.className = `alert alert-${type}`;
+      alert.style.display = 'block';
+      
+      // Auto-hide error alerts after 5 seconds
+      if (type === 'error') {
+        setTimeout(() => {
+          alert.style.display = 'none';
+        }, 5000);
+      }
+    }
+    
+    function hideAlert() {
+      document.getElementById('alert').style.display = 'none';
+    }
+    
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        // Verify token is still valid
+        fetch(`${API_BASE}/api/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Token invalid');
+        })
+        .then(user => {
+          showAlert('You are already logged in. Redirecting...', 'info');
+          setTimeout(() => {
+            if (user.isAdmin) {
+              window.location.href = 'admin.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 1000);
+        })
+        .catch(() => {
+          // Token is invalid, remove it
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userInfo');
+        });
+      }
     });
   </script>
 </body>
