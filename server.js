@@ -106,6 +106,7 @@ app.post('/api/auth/register', async (req, res) => {
     
     // Don't return password
     const { password: _, ...userResponse } = user;
+    void _; // Mark as intentionally unused
     res.status(201).json({ user: userResponse, message: 'Registration successful. Awaiting admin approval.' });
   } catch (error) {
     console.error('Registration error:', error);
@@ -142,6 +143,7 @@ app.post('/api/auth/login', async (req, res) => {
     
     // Don't return password
     const { password: _, ...userResponse } = user;
+    void _; // Mark as intentionally unused
     res.json({ token, user: userResponse });
   } catch (error) {
     console.error('Login error:', error);
@@ -161,6 +163,7 @@ app.get('/api/user/profile', authenticateToken, async (req, res) => {
     
     // Don't return password
     const { password: _, ...userResponse } = user;
+    void _; // Mark as intentionally unused
     res.json(userResponse);
   } catch (error) {
     console.error('Profile error:', error);
@@ -174,6 +177,7 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
     const users = await readData('users.json');
     const userList = Object.values(users).map(user => {
       const { password: _, ...userResponse } = user;
+      void _; // Mark as intentionally unused
       return userResponse;
     });
     res.json(userList);
