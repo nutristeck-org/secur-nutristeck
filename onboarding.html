@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NutriSteck Secure Banking Account Onboarding - Choose your account type and complete setup">
+  <meta name="keywords" content="nutristeck, banking, account setup, onboarding">
+  <meta name="author" content="NutriSteck Organization">
+  <title>Account Setup - NutriSteck Secure Banking</title>
+  <style>
+    :root {
+      --green: #124e2a;
+      --panel: #0f6b3b;
+      --cream: #f7f3e9;
+      --muted: #6b7280;
+      --accent: #d4b03f;
+      --error: #dc2626;
+      --success: #059669;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: #f1f5f3;
+      color: #05201a;
+    }
+    
+    .header {
+      background: var(--green);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: var(--green);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    
+    .progress-bar {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+    
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: #e5e7eb;
+      z-index: 0;
+    }
+    
+    .progress-step {
+      background: white;
+      border: 3px solid #e5e7eb;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .progress-step.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+    
+    .progress-step.completed {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(11, 20, 12, 0.12);
+      margin-bottom: 24px;
+    }
+    
+    .card h1 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      color: var(--green);
+    }
+    
+    .card .subtitle {
+      margin: 0 0 32px;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+    
+    .account-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    
+    .account-type {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .account-type:hover {
+      border-color: var(--green);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(18, 78, 42, 0.1);
+    }
+    
+    .account-type.selected {
+      border-color: var(--green);
+      background: #f0f9f4;
+    }
+    
+    .account-type .icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    
+    .account-type h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 1.3rem;
+    }
+    
+    .account-type .description {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0 0 16px;
+    }
+    
+    .account-type .features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .account-type .features li {
+      padding: 4px 0;
+      color: #374151;
+      font-size: 14px;
+    }
+    
+    .account-type .features li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    
+    .form-section {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .form-group {
+      margin-bottom: 24px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--green);
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--panel);
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn:disabled {
+      background: var(--muted);
+      color: white;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      margin-top: 32px;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    
+    .alert-error {
+      background: #fee2e2;
+      color: var(--error);
+      border: 1px solid #fecaca;
+    }
+    
+    .alert-success {
+      background: #dcfce7;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 16px;
+        margin: 20px auto;
+      }
+      
+      .card {
+        padding: 24px 20px;
+      }
+      
+      .account-types {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-brand">
+      <div class="logo">N</div>
+      <span>Account Setup</span>
+    </div>
+    <div>
+      <span id="userName">Loading...</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress-steps">
+        <div class="progress-step completed">1</div>
+        <div class="progress-step completed">2</div>
+        <div class="progress-step active">3</div>
+        <div class="progress-step">4</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1>Choose Your Account Type</h1>
+      <p class="subtitle">Select the banking account that best fits your financial needs. You can add additional accounts later.</p>
+      
+      <div id="alert" class="alert" style="display: none;"></div>
+      
+      <div class="account-types">
+        <div class="account-type" data-account="checking">
+          <span class="icon">💳</span>
+          <h3>Personal Checking</h3>
+          <p class="description">Perfect for everyday banking needs with unlimited transactions and easy access to your money.</p>
+          <ul class="features">
+            <li>No minimum balance required</li>
+            <li>Unlimited transactions</li>
+            <li>Debit card included</li>
+            <li>Online bill pay</li>
+            <li>Mobile deposit</li>
+          </ul>
+        </div>
+        
+        <div class="account-type" data-account="savings">
+          <span class="icon">🏦</span>
+          <h3>High-Yield Savings</h3>
+          <p class="description">Grow your money with competitive interest rates while maintaining easy access to your funds.</p>
+          <ul class="features">
+            <li>High interest rates</li>
+            <li>No monthly fees</li>
+            <li>FDIC insured</li>
+            <li>Online transfers</li>
+            <li>Mobile banking</li>
+          </ul>
+        </div>
+        
+        <div class="account-type" data-account="ira">
+          <span class="icon">📈</span>
+          <h3>IRA Account</h3>
+          <p class="description">Plan for your retirement with tax-advantaged Individual Retirement Account options.</p>
+          <ul class="features">
+            <li>Traditional or Roth IRA</li>
+            <li>Tax advantages</li>
+            <li>Investment options</li>
+            <li>Retirement planning tools</li>
+            <li>Low fees</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="form-section" id="accountDetails" style="display: none;">
+        <h3>Account Details</h3>
+        
+        <div class="form-group">
+          <label for="accountName">Account Nickname (Optional)</label>
+          <input type="text" id="accountName" name="accountName" placeholder="e.g., My Checking Account">
+        </div>
+        
+        <div class="form-group" id="initialDepositGroup">
+          <label for="initialDeposit">Initial Deposit Amount</label>
+          <input type="number" id="initialDeposit" name="initialDeposit" min="25" step="0.01" placeholder="25.00" required>
+          <small style="color: var(--muted); font-size: 14px;">Minimum $25.00 required</small>
+        </div>
+        
+        <div class="form-group" id="iraTypeGroup" style="display: none;">
+          <label for="iraType">IRA Type</label>
+          <select id="iraType" name="iraType">
+            <option value="">Select IRA Type</option>
+            <option value="traditional">Traditional IRA</option>
+            <option value="roth">Roth IRA</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="goBack()">Back to Dashboard</button>
+        <button class="btn btn-primary" id="completeSetup" onclick="completeOnboarding()" disabled>Complete Setup</button>
+      </div>
+      
+      <div class="loading" id="loading">
+        Setting up your account...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let currentUser = null;
+    let selectedAccountType = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await checkAuth();
+      setupEventListeners();
+    });
+
+    async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+
+        currentUser = await response.json();
+        
+        if (currentUser.isAdmin) {
+          window.location.href = 'admin.html';
+          return;
+        }
+
+        if (!currentUser.isActive) {
+          window.location.href = 'dashboard.html';
+          return;
+        }
+
+        document.getElementById('userName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
+        window.location.href = 'login.html';
+      }
+    }
+
+    function setupEventListeners() {
+      // Account type selection
+      document.querySelectorAll('.account-type').forEach(card => {
+        card.addEventListener('click', () => selectAccountType(card.dataset.account));
+      });
+
+      // Form validation
+      document.getElementById('initialDeposit').addEventListener('input', validateForm);
+      document.getElementById('iraType').addEventListener('change', validateForm);
+    }
+
+    function selectAccountType(accountType) {
+      // Remove previous selection
+      document.querySelectorAll('.account-type').forEach(card => {
+        card.classList.remove('selected');
+      });
+
+      // Add selection to clicked card
+      document.querySelector(`[data-account="${accountType}"]`).classList.add('selected');
+      selectedAccountType = accountType;
+
+      // Show account details form
+      document.getElementById('accountDetails').style.display = 'block';
+      
+      // Show/hide IRA specific fields
+      const iraTypeGroup = document.getElementById('iraTypeGroup');
+      if (accountType === 'ira') {
+        iraTypeGroup.style.display = 'block';
+        document.getElementById('iraType').required = true;
+      } else {
+        iraTypeGroup.style.display = 'none';
+        document.getElementById('iraType').required = false;
+      }
+
+      validateForm();
+    }
+
+    function validateForm() {
+      const completeButton = document.getElementById('completeSetup');
+      const initialDeposit = document.getElementById('initialDeposit').value;
+      const iraType = document.getElementById('iraType').value;
+
+      let isValid = selectedAccountType && 
+                   initialDeposit && 
+                   parseFloat(initialDeposit) >= 25;
+
+      if (selectedAccountType === 'ira') {
+        isValid = isValid && iraType;
+      }
+
+      completeButton.disabled = !isValid;
+    }
+
+    async function completeOnboarding() {
+      if (!selectedAccountType) {
+        showAlert('Please select an account type', 'error');
+        return;
+      }
+
+      const accountName = document.getElementById('accountName').value;
+      const initialDeposit = parseFloat(document.getElementById('initialDeposit').value);
+      const iraType = document.getElementById('iraType').value;
+
+      if (initialDeposit < 25) {
+        showAlert('Initial deposit must be at least $25.00', 'error');
+        return;
+      }
+
+      const completeButton = document.getElementById('completeSetup');
+      const loading = document.getElementById('loading');
+
+      completeButton.disabled = true;
+      loading.style.display = 'block';
+
+      try {
+        // In a real implementation, this would call the API to create the account
+        // For now, we'll simulate the process
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        showAlert('Account setup complete! Your initial deposit is pending approval.', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
+
+      } catch (error) {
+        console.error('Onboarding failed:', error);
+        showAlert('Failed to complete account setup. Please try again.', 'error');
+      } finally {
+        completeButton.disabled = false;
+        loading.style.display = 'none';
+      }
+    }
+
+    function goBack() {
+      window.location.href = 'dashboard.html';
+    }
+
+    function showAlert(message, type) {
+      const alert = document.getElementById('alert');
+      alert.textContent = message;
+      alert.className = `alert alert-${type}`;
+      alert.style.display = 'block';
+      
+      if (type === 'error') {
+        setTimeout(() => {
+          alert.style.display = 'none';
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>
