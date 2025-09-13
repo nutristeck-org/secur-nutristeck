@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="NutriSteck Secure Banking - Cryptocurrency Deposits" />
+  <meta name="keywords" content="nutristeck, secure banking, crypto, deposit, bitcoin, ethereum" />
+  <meta name="author" content="NutriSteck Organization" />
+  <title>Crypto Deposit — NutriSteck Secure</title>
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#f6f8f5;color:#06211a}
+    header{background:#fff;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
+    .container{max-width:980px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(10,20,12,0.04);margin-bottom:16px}
+    .form-group{margin-bottom:16px}
+    label{display:block;margin-bottom:6px;font-weight:600;color:#374151}
+    select,input,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:16px}
+    select:focus,input:focus,textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+    button{background:#2563eb;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-right:8px}
+    button:hover{background:#1d4ed8}
+    button.secondary{background:#6b7280;color:#fff}
+    button.secondary:hover{background:#4b5563}
+    .wallet-display{background:#f9fafb;padding:16px;border:1px solid #e5e7eb;border-radius:8px;margin:16px 0}
+    .wallet-address{font-family:monospace;font-size:14px;word-break:break-all;margin:8px 0;padding:8px;background:#fff;border:1px dashed #d1d5db;border-radius:4px}
+    .warning{background:#fef3cd;border:1px solid #f59e0b;color:#92400e;padding:12px;border-radius:8px;margin:16px 0}
+    .success{background:#d1fae5;border:1px solid #10b981;color:#065f46;padding:12px;border-radius:8px;margin:16px 0}
+    .qr-code{text-align:center;margin:16px 0}
+    .qr-code img{max-width:200px;border:1px solid #e5e7eb;border-radius:8px}
+    .deposit-form{display:none}
+    .step{margin-bottom:24px}
+    .step-title{font-weight:700;font-size:18px;margin-bottom:12px;color:#1f2937}
+    .copy-btn{background:#059669;font-size:14px;padding:6px 12px;margin-left:8px}
+    .copy-btn:hover{background:#047857}
+    .network-info{font-size:14px;color:#6b7280;margin-top:4px}
+    .pending-deposits{margin-top:24px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left}
+    .status-pending{color:#d97706;font-weight:600}
+    .status-approved{color:#059669;font-weight:600}
+    .status-rejected{color:#dc2626;font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <div style="font-weight:700">NutriSteck Secure</div>
+    <div><a href="login.html">Sign out</a></div>
+  </header>
+
+  <nav style="padding:12px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">
+    <a href="dashboard.html">← Back to Dashboard</a> |
+    <a href="index.html">Home</a> |
+    <a href="zelle.html">Zelle</a> |
+    <a href="mobile-deposit.html">Mobile Deposit</a> |
+    <a href="bill-pay.html">Bill Pay</a>
+  </nav>
+
+  <main class="container">
+    <div class="card">
+      <h1 style="margin:0 0 12px;color:#1f2937">Cryptocurrency Deposit</h1>
+      <p style="color:#6b7280;margin-bottom:24px">Select your cryptocurrency and network to get deposit instructions.</p>
+      
+      <div class="step" id="step1">
+        <div class="step-title">Step 1: Select Cryptocurrency & Network</div>
+        
+        <div class="form-group">
+          <label for="cryptoType">Cryptocurrency</label>
+          <select id="cryptoType" onchange="updateNetworks()">
+            <option value="">Select cryptocurrency...</option>
+            <option value="BTC">Bitcoin (BTC)</option>
+            <option value="BNB">Binance Coin (BNB)</option>
+            <option value="ETH">Ethereum (ETH)</option>
+            <option value="TRX">TRON (TRX)</option>
+            <option value="SOL">Solana (SOL)</option>
+            <option value="USDT">Tether (USDT)</option>
+            <option value="USDC">USD Coin (USDC)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="networkGroup" style="display:none">
+          <label for="network">Network</label>
+          <select id="network" onchange="showWalletInfo()">
+            <option value="">Select network...</option>
+          </select>
+          <div class="network-info" id="networkInfo"></div>
+        </div>
+      </div>
+
+      <div class="wallet-display" id="walletDisplay" style="display:none">
+        <div class="step-title">Step 2: Deposit Instructions</div>
+        
+        <div class="warning" id="networkWarning">
+          <strong>⚠️ Important:</strong> Only send <span id="warningCoin"></span> on the <span id="warningNetwork"></span> network to this address. Sending other coins or using wrong networks may result in permanent loss.
+        </div>
+
+        <div>
+          <strong>Wallet Address:</strong>
+          <div class="wallet-address" id="walletAddress">Loading...</div>
+          <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
+        </div>
+
+        <div class="qr-code">
+          <div><strong>QR Code:</strong></div>
+          <img id="qrCode" src="" alt="QR Code for wallet address" style="display:none" />
+          <div id="qrLoading">Generating QR code...</div>
+        </div>
+
+        <button onclick="showDepositForm()" style="margin-top:16px">I've Sent the Crypto →</button>
+      </div>
+
+      <div class="deposit-form" id="depositForm">
+        <div class="step-title">Step 3: Submit Deposit Details</div>
+        
+        <form id="submitDepositForm" onsubmit="submitDeposit(event)">
+          <div class="form-group">
+            <label for="amount">Amount Sent</label>
+            <input type="number" id="amount" step="0.00000001" placeholder="0.00000000" required />
+          </div>
+
+          <div class="form-group">
+            <label for="txHash">Transaction Hash (TXID)</label>
+            <input type="text" id="txHash" placeholder="Enter transaction hash" required />
+          </div>
+
+          <div class="form-group">
+            <label for="depositNote">Additional Note (Optional)</label>
+            <textarea id="depositNote" rows="3" placeholder="Any additional information..."></textarea>
+          </div>
+
+          <button type="submit">Submit Deposit</button>
+          <button type="button" class="secondary" onclick="resetForm()">Reset</button>
+        </form>
+      </div>
+
+      <div class="success" id="successMessage" style="display:none">
+        <strong>✅ Deposit Submitted Successfully!</strong><br>
+        Your deposit is now pending review. You will be notified once it's processed.
+        <div style="margin-top:8px;font-size:14px">
+          Deposit ID: <strong id="depositId"></strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="pending-deposits">
+      <div class="card">
+        <h3 style="margin:0 0 16px">Your Recent Crypto Deposits</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Coin/Network</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>TXID</th>
+            </tr>
+          </thead>
+          <tbody id="depositsTable">
+            <tr>
+              <td colspan="5" style="text-align:center;color:#6b7280">No deposits yet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Check authentication
+    if(sessionStorage.getItem('rb_auth') !== '1'){ window.location.href='login.html'; }
+
+    const CRYPTO_NETWORKS = {
+      'BTC': [
+        { value: 'BTC', label: 'Bitcoin Network', info: 'Send only Bitcoin (BTC) to this address' }
+      ],
+      'BNB': [
+        { value: 'BSC', label: 'BNB Smart Chain (BSC)', info: 'BEP20 network only' }
+      ],
+      'ETH': [
+        { value: 'ERC20', label: 'Ethereum (ERC20)', info: 'Ethereum mainnet only' }
+      ],
+      'TRX': [
+        { value: 'TRC20', label: 'TRON (TRC20)', info: 'TRON network only' }
+      ],
+      'SOL': [
+        { value: 'SOL', label: 'Solana Network', info: 'Solana mainnet only' }
+      ],
+      'USDT': [
+        { value: 'BEP20', label: 'BNB Smart Chain (BEP20)', info: 'BSC network - lower fees' },
+        { value: 'ERC20', label: 'Ethereum (ERC20)', info: 'Ethereum network - higher fees' },
+        { value: 'TRC20', label: 'TRON (TRC20)', info: 'TRON network - very low fees' },
+        { value: 'SOL-USDT', label: 'Solana (SPL)', info: 'Solana network - fast & low fees' }
+      ],
+      'USDC': [
+        { value: 'BEP20', label: 'BNB Smart Chain (BEP20)', info: 'BSC network - lower fees' },
+        { value: 'ERC20', label: 'Ethereum (ERC20)', info: 'Ethereum network - higher fees' },
+        { value: 'SOL-USDC', label: 'Solana (SPL)', info: 'Solana network - fast & low fees' }
+      ]
+    };
+
+    let currentCrypto = '';
+    let currentNetwork = '';
+    let currentAddress = '';
+
+    function updateNetworks() {
+      const cryptoType = document.getElementById('cryptoType').value;
+      const networkGroup = document.getElementById('networkGroup');
+      const networkSelect = document.getElementById('network');
+      
+      if (!cryptoType) {
+        networkGroup.style.display = 'none';
+        document.getElementById('walletDisplay').style.display = 'none';
+        return;
+      }
+
+      currentCrypto = cryptoType;
+      networkSelect.innerHTML = '<option value="">Select network...</option>';
+      
+      const networks = CRYPTO_NETWORKS[cryptoType];
+      networks.forEach(network => {
+        const option = document.createElement('option');
+        option.value = network.value;
+        option.textContent = network.label;
+        networkSelect.appendChild(option);
+      });
+
+      networkGroup.style.display = 'block';
+      document.getElementById('walletDisplay').style.display = 'none';
+    }
+
+    async function showWalletInfo() {
+      const network = document.getElementById('network').value;
+      const networkInfo = document.getElementById('networkInfo');
+      
+      if (!network) {
+        document.getElementById('walletDisplay').style.display = 'none';
+        return;
+      }
+
+      currentNetwork = network;
+      const networkData = CRYPTO_NETWORKS[currentCrypto].find(n => n.value === network);
+      networkInfo.textContent = networkData.info;
+
+      // Show wallet display
+      document.getElementById('walletDisplay').style.display = 'block';
+      
+      // Update warning message
+      document.getElementById('warningCoin').textContent = currentCrypto;
+      document.getElementById('warningNetwork').textContent = networkData.label;
+
+      // Load wallet address from backend
+      await loadWalletAddress();
+    }
+
+    async function loadWalletAddress() {
+      try {
+        const response = await fetch('/api/crypto/wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            crypto: currentCrypto, 
+            network: currentNetwork 
+          })
+        });
+
+        const data = await response.json();
+        if (data.address) {
+          currentAddress = data.address;
+          document.getElementById('walletAddress').textContent = data.address;
+          generateQRCode(data.address);
+        } else {
+          document.getElementById('walletAddress').textContent = 'Wallet address not configured. Please contact support.';
+        }
+      } catch (error) {
+        document.getElementById('walletAddress').textContent = 'Error loading wallet address. Please try again.';
+      }
+    }
+
+    function generateQRCode(address) {
+      const qrCode = document.getElementById('qrCode');
+      const qrLoading = document.getElementById('qrLoading');
+      
+      // Use QR Server API for generating QR codes
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
+      
+      qrCode.src = qrUrl;
+      qrCode.style.display = 'block';
+      qrLoading.style.display = 'none';
+    }
+
+    function copyAddress() {
+      const address = currentAddress;
+      if (address) {
+        navigator.clipboard.writeText(address).then(() => {
+          const btn = event.target;
+          const originalText = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.style.background = '#059669';
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '#059669';
+          }, 2000);
+        }).catch(() => {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = address;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          alert('Address copied to clipboard');
+        });
+      }
+    }
+
+    function showDepositForm() {
+      document.getElementById('depositForm').style.display = 'block';
+      document.querySelector('#depositForm .step-title').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function submitDeposit(event) {
+      event.preventDefault();
+      
+      const amount = document.getElementById('amount').value;
+      const txHash = document.getElementById('txHash').value;
+      const note = document.getElementById('depositNote').value;
+
+      try {
+        const response = await fetch('/api/crypto/deposit', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-user': sessionStorage.getItem('rb_user') || 'Member'
+          },
+          body: JSON.stringify({
+            crypto: currentCrypto,
+            network: currentNetwork,
+            address: currentAddress,
+            amount: parseFloat(amount),
+            txHash: txHash.trim(),
+            note: note.trim(),
+            timestamp: new Date().toISOString()
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('depositId').textContent = data.depositId;
+          document.getElementById('successMessage').style.display = 'block';
+          document.getElementById('depositForm').style.display = 'none';
+          
+          // Refresh deposits table
+          loadDeposits();
+        } else {
+          alert('Error submitting deposit: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        alert('Error submitting deposit. Please try again.');
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('submitDepositForm').reset();
+      document.getElementById('depositForm').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'none';
+    }
+
+    async function loadDeposits() {
+      try {
+        const response = await fetch('/api/crypto/deposits', {
+          headers: { 'x-user': sessionStorage.getItem('rb_user') || 'Member' }
+        });
+
+        const deposits = await response.json();
+        const tbody = document.getElementById('depositsTable');
+        
+        if (deposits.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#6b7280">No deposits yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        deposits.forEach(deposit => {
+          const tr = document.createElement('tr');
+          const statusClass = `status-${deposit.status}`;
+          const shortTxId = deposit.txHash.length > 16 ? 
+            deposit.txHash.substring(0, 8) + '...' + deposit.txHash.substring(deposit.txHash.length - 8) : 
+            deposit.txHash;
+          
+          tr.innerHTML = `
+            <td>${new Date(deposit.timestamp).toLocaleDateString()}</td>
+            <td>${deposit.crypto}/${deposit.network}</td>
+            <td>${deposit.amount} ${deposit.crypto}</td>
+            <td class="${statusClass}">${deposit.status.toUpperCase()}</td>
+            <td title="${deposit.txHash}">${shortTxId}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error loading deposits:', error);
+      }
+    }
+
+    // Load deposits on page load
+    loadDeposits();
+  </script>
+</body>
+</html>

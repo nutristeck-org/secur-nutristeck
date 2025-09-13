@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="NutriSteck Secure Banking - Admin Crypto Wallet Management" />
+  <title>Crypto Admin — NutriSteck Secure</title>
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#f6f8f5;color:#06211a}
+    header{background:#fff;padding:12px 16px;box-shadow:0 2px 6px rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
+    .container{max-width:1200px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(10,20,12,0.04);margin-bottom:16px}
+    .form-group{margin-bottom:16px}
+    label{display:block;margin-bottom:6px;font-weight:600;color:#374151}
+    select,input,textarea{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:16px}
+    select:focus,input:focus,textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+    button{background:#2563eb;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;margin-right:8px}
+    button:hover{background:#1d4ed8}
+    button.secondary{background:#6b7280;color:#fff}
+    button.secondary:hover{background:#4b5563}
+    button.danger{background:#dc2626;color:#fff}
+    button.danger:hover{background:#b91c1c}
+    button.success{background:#059669;color:#fff}
+    button.success:hover{background:#047857}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #eef2f7;text-align:left}
+    th{background:#f9fafb;font-weight:600}
+    .wallet-address{font-family:monospace;font-size:12px;max-width:200px;word-break:break-all}
+    .status-active{color:#059669;font-weight:600}
+    .status-inactive{color:#6b7280;font-weight:600}
+    .admin-warning{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px;border-radius:8px;margin:16px 0}
+    .success{background:#d1fae5;border:1px solid #10b981;color:#065f46;padding:12px;border-radius:8px;margin:16px 0}
+    .error{background:#fee2e2;border:1px solid #f87171;color:#991b1b;padding:12px;border-radius:8px;margin:16px 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    @media (max-width: 768px){
+      .grid{grid-template-columns:1fr}
+    }
+    .pending-item{background:#fef3cd;border-left:4px solid #f59e0b;padding:12px;margin:8px 0;border-radius:4px}
+    .deposit-details{font-size:14px;color:#6b7280;margin-top:4px}
+  </style>
+</head>
+<body>
+  <header>
+    <div style="font-weight:700">NutriSteck Secure - Admin Panel</div>
+    <div><a href="login.html">Sign out</a></div>
+  </header>
+
+  <nav style="padding:12px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">
+    <a href="dashboard.html">← Dashboard</a> |
+    <a href="crypto-deposit.html">User Crypto Deposit</a> |
+    <span style="color:#059669;font-weight:600">Admin Panel</span>
+  </nav>
+
+  <main class="container">
+    <div class="admin-warning">
+      <strong>⚠️ Admin Access:</strong> This is the cryptocurrency wallet management panel. Changes here affect all user deposits.
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2 style="margin:0 0 16px">Wallet Management</h2>
+          
+          <form id="walletForm" onsubmit="saveWallet(event)">
+            <div class="form-group">
+              <label for="crypto">Cryptocurrency</label>
+              <select id="crypto" onchange="updateNetworkOptions()" required>
+                <option value="">Select cryptocurrency...</option>
+                <option value="BTC">Bitcoin (BTC)</option>
+                <option value="BNB">Binance Coin (BNB)</option>
+                <option value="ETH">Ethereum (ETH)</option>
+                <option value="TRX">TRON (TRX)</option>
+                <option value="SOL">Solana (SOL)</option>
+                <option value="USDT">Tether (USDT)</option>
+                <option value="USDC">USD Coin (USDC)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="network">Network</label>
+              <select id="network" required>
+                <option value="">Select network...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="address">Wallet Address</label>
+              <input type="text" id="address" placeholder="Enter wallet address" required />
+            </div>
+
+            <div class="form-group">
+              <label for="label">Label/Nickname</label>
+              <input type="text" id="label" placeholder="e.g., Main BTC Address" required />
+            </div>
+
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select id="status" required>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <button type="submit">Save Wallet</button>
+            <button type="button" class="secondary" onclick="resetForm()">Reset</button>
+            <button type="button" class="danger" id="deleteBtn" onclick="deleteWallet()" style="display:none">Delete</button>
+          </form>
+
+          <div id="formMessage" style="display:none"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 16px">Quick Actions</h3>
+          <button onclick="exportWallets()" class="secondary">Export Wallets</button>
+          <button onclick="loadDefaultWallets()" class="success">Load Demo Wallets</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin:0 0 16px">Current Wallets</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Crypto</th>
+                <th>Network</th>
+                <th>Address</th>
+                <th>Label</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="walletsTable">
+              <tr>
+                <td colspan="6" style="text-align:center;color:#6b7280">No wallets configured</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 16px">Pending Crypto Deposits</h3>
+      <div id="pendingDeposits">
+        <div style="text-align:center;color:#6b7280;padding:20px">No pending deposits</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 16px">Recent Deposit Activity</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>Crypto/Network</th>
+            <th>Amount</th>
+            <th>TXID</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="depositsTable">
+          <tr>
+            <td colspan="7" style="text-align:center;color:#6b7280">No deposits yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // Simple admin auth check (in production, implement proper admin authentication)
+    const adminUsers = ['admin', 'Lowkeyrich1413']; // Demo admin users
+    const currentUser = sessionStorage.getItem('rb_user');
+    if(sessionStorage.getItem('rb_auth') !== '1' || !adminUsers.includes(currentUser)){ 
+      alert('Admin access required');
+      window.location.href='login.html'; 
+    }
+
+    const CRYPTO_NETWORKS = {
+      'BTC': [{ value: 'BTC', label: 'Bitcoin Network' }],
+      'BNB': [{ value: 'BSC', label: 'BNB Smart Chain (BSC)' }],
+      'ETH': [{ value: 'ERC20', label: 'Ethereum (ERC20)' }],
+      'TRX': [{ value: 'TRC20', label: 'TRON (TRC20)' }],
+      'SOL': [{ value: 'SOL', label: 'Solana Network' }],
+      'USDT': [
+        { value: 'BEP20', label: 'BNB Smart Chain (BEP20)' },
+        { value: 'ERC20', label: 'Ethereum (ERC20)' },
+        { value: 'TRC20', label: 'TRON (TRC20)' },
+        { value: 'SOL-USDT', label: 'Solana (SPL)' }
+      ],
+      'USDC': [
+        { value: 'BEP20', label: 'BNB Smart Chain (BEP20)' },
+        { value: 'ERC20', label: 'Ethereum (ERC20)' },
+        { value: 'SOL-USDC', label: 'Solana (SPL)' }
+      ]
+    };
+
+    let editingWalletId = null;
+
+    function updateNetworkOptions() {
+      const crypto = document.getElementById('crypto').value;
+      const networkSelect = document.getElementById('network');
+      
+      networkSelect.innerHTML = '<option value="">Select network...</option>';
+      
+      if (crypto && CRYPTO_NETWORKS[crypto]) {
+        CRYPTO_NETWORKS[crypto].forEach(network => {
+          const option = document.createElement('option');
+          option.value = network.value;
+          option.textContent = network.label;
+          networkSelect.appendChild(option);
+        });
+      }
+    }
+
+    async function saveWallet(event) {
+      event.preventDefault();
+      
+      const formData = {
+        crypto: document.getElementById('crypto').value,
+        network: document.getElementById('network').value,
+        address: document.getElementById('address').value,
+        label: document.getElementById('label').value,
+        status: document.getElementById('status').value
+      };
+
+      if (editingWalletId) {
+        formData.id = editingWalletId;
+      }
+
+      try {
+        const response = await fetch('/api/admin/wallet', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-admin-user': currentUser
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showMessage('Wallet saved successfully!', 'success');
+          resetForm();
+          loadWallets();
+        } else {
+          showMessage('Error: ' + result.error, 'error');
+        }
+      } catch (error) {
+        showMessage('Error saving wallet. Please try again.', 'error');
+      }
+    }
+
+    async function deleteWallet() {
+      if (!editingWalletId || !confirm('Are you sure you want to delete this wallet?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/wallet/' + editingWalletId, {
+          method: 'DELETE',
+          headers: { 'x-admin-user': currentUser }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showMessage('Wallet deleted successfully!', 'success');
+          resetForm();
+          loadWallets();
+        } else {
+          showMessage('Error: ' + result.error, 'error');
+        }
+      } catch (error) {
+        showMessage('Error deleting wallet. Please try again.', 'error');
+      }
+    }
+
+    function editWallet(walletId) {
+      // This would populate form with wallet data for editing
+      // Implementation depends on wallet data structure
+      console.log('Edit wallet:', walletId);
+    }
+
+    function resetForm() {
+      document.getElementById('walletForm').reset();
+      editingWalletId = null;
+      document.getElementById('deleteBtn').style.display = 'none';
+      hideMessage();
+    }
+
+    function showMessage(text, type) {
+      const messageDiv = document.getElementById('formMessage');
+      messageDiv.className = type;
+      messageDiv.textContent = text;
+      messageDiv.style.display = 'block';
+    }
+
+    function hideMessage() {
+      document.getElementById('formMessage').style.display = 'none';
+    }
+
+    async function loadWallets() {
+      try {
+        const response = await fetch('/api/admin/wallets', {
+          headers: { 'x-admin-user': currentUser }
+        });
+
+        const wallets = await response.json();
+        const tbody = document.getElementById('walletsTable');
+        
+        if (wallets.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#6b7280">No wallets configured</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        wallets.forEach(wallet => {
+          const tr = document.createElement('tr');
+          const statusClass = wallet.status === 'active' ? 'status-active' : 'status-inactive';
+          const shortAddress = wallet.address.length > 20 ? 
+            wallet.address.substring(0, 10) + '...' + wallet.address.substring(wallet.address.length - 10) : 
+            wallet.address;
+          
+          tr.innerHTML = `
+            <td><strong>${wallet.crypto}</strong></td>
+            <td>${wallet.network}</td>
+            <td class="wallet-address" title="${wallet.address}">${shortAddress}</td>
+            <td>${wallet.label}</td>
+            <td class="${statusClass}">${wallet.status.toUpperCase()}</td>
+            <td>
+              <button onclick="editWallet('${wallet.id}')" class="secondary" style="font-size:12px;padding:4px 8px">Edit</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error loading wallets:', error);
+      }
+    }
+
+    async function loadPendingDeposits() {
+      try {
+        const response = await fetch('/api/admin/deposits/pending', {
+          headers: { 'x-admin-user': currentUser }
+        });
+
+        const deposits = await response.json();
+        const container = document.getElementById('pendingDeposits');
+        
+        if (deposits.length === 0) {
+          container.innerHTML = '<div style="text-align:center;color:#6b7280;padding:20px">No pending deposits</div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        deposits.forEach(deposit => {
+          const div = document.createElement('div');
+          div.className = 'pending-item';
+          div.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <strong>${deposit.user}</strong> - ${deposit.amount} ${deposit.crypto}/${deposit.network}
+                <div class="deposit-details">
+                  TXID: ${deposit.txHash}<br>
+                  Date: ${new Date(deposit.timestamp).toLocaleString()}<br>
+                  ${deposit.note ? 'Note: ' + deposit.note : ''}
+                </div>
+              </div>
+              <div>
+                <button onclick="approveDeposit('${deposit.id}')" class="success" style="font-size:12px;padding:6px 12px">Approve</button>
+                <button onclick="rejectDeposit('${deposit.id}')" class="danger" style="font-size:12px;padding:6px 12px">Reject</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        console.error('Error loading pending deposits:', error);
+      }
+    }
+
+    async function approveDeposit(depositId) {
+      await updateDepositStatus(depositId, 'approved');
+    }
+
+    async function rejectDeposit(depositId) {
+      const reason = prompt('Reason for rejection (optional):');
+      await updateDepositStatus(depositId, 'rejected', reason);
+    }
+
+    async function updateDepositStatus(depositId, status, reason = '') {
+      try {
+        const response = await fetch('/api/admin/deposit/status', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-admin-user': currentUser 
+          },
+          body: JSON.stringify({ 
+            depositId, 
+            status, 
+            reason,
+            adminUser: currentUser
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          showMessage(`Deposit ${status} successfully!`, 'success');
+          loadPendingDeposits();
+          loadAllDeposits();
+        } else {
+          showMessage('Error: ' + result.error, 'error');
+        }
+      } catch (error) {
+        showMessage('Error updating deposit status. Please try again.', 'error');
+      }
+    }
+
+    async function loadAllDeposits() {
+      try {
+        const response = await fetch('/api/admin/deposits/all', {
+          headers: { 'x-admin-user': currentUser }
+        });
+
+        const deposits = await response.json();
+        const tbody = document.getElementById('depositsTable');
+        
+        if (deposits.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#6b7280">No deposits yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        deposits.slice(0, 10).forEach(deposit => { // Show last 10 deposits
+          const tr = document.createElement('tr');
+          const statusClass = `status-${deposit.status}`;
+          const shortTxId = deposit.txHash.length > 16 ? 
+            deposit.txHash.substring(0, 8) + '...' + deposit.txHash.substring(deposit.txHash.length - 8) : 
+            deposit.txHash;
+          
+          tr.innerHTML = `
+            <td>${new Date(deposit.timestamp).toLocaleDateString()}</td>
+            <td>${deposit.user}</td>
+            <td>${deposit.crypto}/${deposit.network}</td>
+            <td>${deposit.amount} ${deposit.crypto}</td>
+            <td title="${deposit.txHash}">${shortTxId}</td>
+            <td class="${statusClass}">${deposit.status.toUpperCase()}</td>
+            <td>
+              ${deposit.status === 'pending' ? 
+                `<button onclick="approveDeposit('${deposit.id}')" class="success" style="font-size:12px;padding:4px 8px">Approve</button>
+                 <button onclick="rejectDeposit('${deposit.id}')" class="danger" style="font-size:12px;padding:4px 8px">Reject</button>` : 
+                '-'
+              }
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error loading all deposits:', error);
+      }
+    }
+
+    function exportWallets() {
+      // This would export wallet configuration
+      alert('Export functionality would be implemented here');
+    }
+
+    async function loadDefaultWallets() {
+      if (!confirm('This will add demo wallet addresses. Continue?')) return;
+
+      const demoWallets = [
+        { crypto: 'BTC', network: 'BTC', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', label: 'Demo BTC Wallet', status: 'active' },
+        { crypto: 'ETH', network: 'ERC20', address: '0x742d35Cc6634C0532925a3b8D2FB3c4a1DD7E9f5', label: 'Demo ETH Wallet', status: 'active' },
+        { crypto: 'USDT', network: 'TRC20', address: 'TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE', label: 'Demo USDT TRC20', status: 'active' },
+        { crypto: 'USDT', network: 'ERC20', address: '0x8ba1f109551bD432803012645Hac136c87c3e8a', label: 'Demo USDT ERC20', status: 'active' }
+      ];
+
+      try {
+        for (const wallet of demoWallets) {
+          await fetch('/api/admin/wallet', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'x-admin-user': currentUser
+            },
+            body: JSON.stringify(wallet)
+          });
+        }
+        showMessage('Demo wallets loaded successfully!', 'success');
+        loadWallets();
+      } catch (error) {
+        showMessage('Error loading demo wallets.', 'error');
+      }
+    }
+
+    // Load data on page load
+    loadWallets();
+    loadPendingDeposits();
+    loadAllDeposits();
+
+    // Refresh pending deposits every 30 seconds
+    setInterval(loadPendingDeposits, 30000);
+  </script>
+</body>
+</html>
