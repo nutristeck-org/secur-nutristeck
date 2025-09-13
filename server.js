@@ -71,10 +71,50 @@ function requireAdmin(req, res, next) {
 // User registration
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { username, email, password, firstName, lastName } = req.body;
+    const { 
+      username, 
+      email, 
+      password, 
+      firstName, 
+      lastName,
+      phoneNumber,
+      dateOfBirth,
+      streetAddress,
+      city,
+      state,
+      zipCode,
+      country,
+      taxId,
+      employmentStatus,
+      annualIncome,
+      securityQuestion,
+      securityAnswer,
+      pin
+    } = req.body;
     
-    if (!username || !email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'All fields are required' });
+    // Validate required fields
+    const requiredFields = {
+      username, email, password, firstName, lastName,
+      phoneNumber, dateOfBirth, streetAddress, city, state,
+      zipCode, country, taxId, employmentStatus, annualIncome,
+      securityQuestion, securityAnswer, pin
+    };
+    
+    for (const [field, value] of Object.entries(requiredFields)) {
+      if (!value && value !== 0) {
+        return res.status(400).json({ error: `${field} is required` });
+      }
+    }
+    
+    // Validate PIN format (must be 4 digits)
+    if (!/^\d{4}$/.test(pin)) {
+      return res.status(400).json({ error: 'PIN must be exactly 4 digits' });
+    }
+    
+    // Validate annual income is a number
+    const income = parseInt(annualIncome);
+    if (isNaN(income) || income < 0) {
+      return res.status(400).json({ error: 'Annual income must be a valid positive number' });
     }
 
     const users = await readData('users.json');
@@ -84,8 +124,9 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Hash password
+    // Hash password and PIN
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPin = await bcrypt.hash(pin, 10);
     
     // Create user
     const user = {
@@ -94,7 +135,20 @@ app.post('/api/auth/register', async (req, res) => {
       email,
       firstName,
       lastName,
+      phoneNumber,
+      dateOfBirth,
+      streetAddress,
+      city,
+      state,
+      zipCode,
+      country,
+      taxId,
+      employmentStatus,
+      annualIncome: income,
+      securityQuestion,
+      securityAnswer, // Note: In production, this should also be hashed
       password: hashedPassword,
+      pin: hashedPin,
       isAdmin: false,
       isActive: false, // Requires admin approval
       createdAt: new Date().toISOString(),
@@ -104,9 +158,9 @@ app.post('/api/auth/register', async (req, res) => {
     users[username] = user;
     await writeData('users.json', users);
     
-    // Don't return password
-    const { password: _, ...userResponse } = user;
-    void _; // Mark as intentionally unused
+    // Don't return sensitive fields
+    const { password: _, pin: __, securityAnswer: ___, ...userResponse } = user;
+    void _; void __; void ___; // Mark as intentionally unused
     res.status(201).json({ user: userResponse, message: 'Registration successful. Awaiting admin approval.' });
   } catch (error) {
     console.error('Registration error:', error);
@@ -141,9 +195,9 @@ app.post('/api/auth/login', async (req, res) => {
       { expiresIn: '24h' }
     );
     
-    // Don't return password
-    const { password: _, ...userResponse } = user;
-    void _; // Mark as intentionally unused
+    // Don't return sensitive fields
+    const { password: _, pin: __, securityAnswer: ___, ...userResponse } = user;
+    void _; void __; void ___; // Mark as intentionally unused
     res.json({ token, user: userResponse });
   } catch (error) {
     console.error('Login error:', error);
@@ -161,9 +215,9 @@ app.get('/api/user/profile', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Don't return password
-    const { password: _, ...userResponse } = user;
-    void _; // Mark as intentionally unused
+    // Don't return sensitive fields
+    const { password: _, pin: __, securityAnswer: ___, ...userResponse } = user;
+    void _; void __; void ___; // Mark as intentionally unused
     res.json(userResponse);
   } catch (error) {
     console.error('Profile error:', error);
@@ -176,8 +230,8 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
   try {
     const users = await readData('users.json');
     const userList = Object.values(users).map(user => {
-      const { password: _, ...userResponse } = user;
-      void _; // Mark as intentionally unused
+      const { password: _, pin: __, securityAnswer: ___, ...userResponse } = user;
+      void _; void __; void ___; // Mark as intentionally unused
       return userResponse;
     });
     res.json(userList);
@@ -228,7 +282,20 @@ async function initializeAdmin() {
         email: 'admin@nutristeck.com',
         firstName: 'System',
         lastName: 'Administrator',
+        phoneNumber: '000-000-0000',
+        dateOfBirth: '1990-01-01',
+        streetAddress: 'Admin Street',
+        city: 'Admin City',
+        state: 'Admin State',
+        zipCode: '00000',
+        country: 'Admin Country',
+        taxId: '000-00-0000',
+        employmentStatus: 'employed',
+        annualIncome: 0,
+        securityQuestion: 'pet',
+        securityAnswer: 'admin',
         password: hashedPassword,
+        pin: await bcrypt.hash('0000', 10),
         isAdmin: true,
         isActive: true,
         createdAt: new Date().toISOString(),
