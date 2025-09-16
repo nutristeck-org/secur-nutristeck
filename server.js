@@ -5,6 +5,9 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
 
+// Load environment variables
+require('dotenv').config();
+
 const app = express();
 
 // Middleware
@@ -219,8 +222,26 @@ async function initializeAdmin() {
     const hasAdmin = Object.values(users).some(user => user.isAdmin);
     
     if (!hasAdmin) {
-      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      const adminPassword = process.env.ADMIN_PASSWORD;
+      
+      // Require ADMIN_PASSWORD to be set in production
+      if (!adminPassword) {
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('ADMIN_PASSWORD environment variable is required in production');
+        } else {
+          console.warn('WARNING: ADMIN_PASSWORD not set. Using default password for development only.');
+        }
+      }
+      
+      // Use environment password or fallback for development
+      const finalPassword = adminPassword || 'admin123-dev-default';
+      
+      // Validate password strength (minimum 12 characters)
+      if (finalPassword.length < 12) {
+        throw new Error('Admin password must be at least 12 characters long');
+      }
+      
+      const hashedPassword = await bcrypt.hash(finalPassword, 10);
       
       const adminUser = {
         id: 'admin-1',
@@ -237,10 +258,13 @@ async function initializeAdmin() {
       
       users.admin = adminUser;
       await writeData('users.json', users);
-      console.log(`Admin user created with username: admin, password: ${adminPassword}`);
+      
+      // Only log that admin was created, not the password
+      console.log('Admin user created with username: admin');
     }
   } catch (error) {
     console.error('Admin initialization error:', error);
+    process.exit(1); // Exit if admin setup fails
   }
 }
 
@@ -254,7 +278,7 @@ async function startServer() {
   await initializeAdmin();
   app.listen(PORT, () => {
     console.log(`NutriSteck Secure Banking API server running on port ${PORT}`);
-    console.log(`Admin login - Username: admin, Password: ${process.env.ADMIN_PASSWORD || 'admin123'}`);
+    console.log('Admin login - Username: admin (password set via environment variable)');
   });
 }
 
