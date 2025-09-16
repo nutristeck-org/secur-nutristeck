@@ -172,7 +172,7 @@
 
   <script>
     // Simple admin auth check (in production, implement proper admin authentication)
-    const adminUsers = ['admin', 'Lowkeyrich1413']; // Demo admin users
+    const adminUsers = ['admin']; // Only allow the admin user
     const currentUser = sessionStorage.getItem('rb_user');
     if(sessionStorage.getItem('rb_auth') !== '1' || !adminUsers.includes(currentUser)){ 
       alert('Admin access required');
@@ -475,31 +475,7 @@
     }
 
     async function loadDefaultWallets() {
-      if (!confirm('This will add demo wallet addresses. Continue?')) return;
-
-      const demoWallets = [
-        { crypto: 'BTC', network: 'BTC', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', label: 'Demo BTC Wallet', status: 'active' },
-        { crypto: 'ETH', network: 'ERC20', address: '0x742d35Cc6634C0532925a3b8D2FB3c4a1DD7E9f5', label: 'Demo ETH Wallet', status: 'active' },
-        { crypto: 'USDT', network: 'TRC20', address: 'TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE', label: 'Demo USDT TRC20', status: 'active' },
-        { crypto: 'USDT', network: 'ERC20', address: '0x8ba1f109551bD432803012645Hac136c87c3e8a', label: 'Demo USDT ERC20', status: 'active' }
-      ];
-
-      try {
-        for (const wallet of demoWallets) {
-          await fetch(`${API_BASE_URL}/api/admin/wallet`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'x-admin-user': currentUser
-            },
-            body: JSON.stringify(wallet)
-          });
-        }
-        showMessage('Demo wallets loaded successfully!', 'success');
-        loadWallets();
-      } catch (error) {
-        showMessage('Error loading demo wallets.', 'error');
-      }
+      alert('Please add your own wallet addresses using the form above. Demo wallets have been removed for security.');
     }
 
     // Load data on page load

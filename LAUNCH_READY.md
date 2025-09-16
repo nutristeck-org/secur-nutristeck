@@ -83,10 +83,11 @@ curl http://localhost:3000/api/health
 - ✅ Admin user management system
 
 ## 🔒 Security Notes
-- Demo credentials: User ID `Lowkeyrich1413`, Password `$SlimYellow1`, PIN `1234`
-- Default admin: username `admin`, password `admin123` (CHANGE THIS!)
-- JWT secret must be changed for production
-- HTTPS is required for production use
+- **Secure Authentication**: Only real user registration - no demo credentials
+- **Admin Security**: Admin username `admin`, password set via `ADMIN_PASSWORD` environment variable (required)
+- **Password Hashing**: All user passwords are securely hashed with bcrypt
+- **JWT Security**: Strong JWT secret required via `JWT_SECRET` environment variable
+- **HTTPS Required**: HTTPS is required for production use
 
 ## 📞 Next Steps
 1. Follow the **LAUNCH_CHECKLIST.md** step by step
