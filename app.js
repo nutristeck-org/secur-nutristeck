@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ================================
 // app.js - Main Server Entry (FINAL STABLE)
 // ================================
@@ -103,3 +104,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+=======
+// Minimal client script for the static demo
+console.log('NutriSteck Secure site loaded');
+>>>>>>> a5c85d049e0b5665c9ffa442e510ffcbc0281bf2

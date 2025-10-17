@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="NutriSteck Secure Banking Dashboard - Manage your accounts, view transactions, and access banking services" />
+  <meta name="keywords" content="nutristeck, secure banking, dashboard, account balance, banking services" />
+  <meta name="author" content="NutriSteck Organization" />
+  <title>NutriSteck Secure Banking — Dashboard</title>
+  <style>
+    :root {
+      --green: #124e2a;
+      --panel: #0f6b3b;
+      --cream: #f7f3e9;
+      --muted: #6b7280;
+      --accent: #d4b03f;
+      --error: #dc2626;
+      --success: #059669;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      margin: 0;
+      background: #f6f8f5;
+      color: #06211a;
+    }
+    
+    .header {
+      background: #fff;
+      padding: 16px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: var(--green);
+      color: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    
+    .user-info {
+      text-align: right;
+    }
+    
+    .user-name {
+      font-weight: 600;
+      color: var(--green);
+      margin: 0;
+    }
+    
+    .user-greeting {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    .welcome-card {
+      background: linear-gradient(135deg, var(--green) 0%, var(--panel) 100%);
+      color: white;
+      padding: 32px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .welcome-content h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    
+    .welcome-content p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    
+    .balance-display {
+      text-align: right;
+    }
+    
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.8;
+      margin: 0 0 4px;
+    }
+    
+    .balance-amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .card h2 {
+      margin: 0 0 24px;
+      color: var(--green);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .service-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    
+    .service-card:hover {
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+    
+    .service-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
+    .service-card h3 {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 1.1rem;
+    }
+    
+    .service-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table th,
+    .table td {
+      padding: 16px 0;
+      text-align: left;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .table th {
+      font-weight: 600;
+      color: var(--green);
+      font-size: 14px;
+    }
+    
+    .table td {
+      color: #374151;
+    }
+    
+    .table tbody tr:hover {
+      background: #f9fafb;
+    }
+    
+    .credit {
+      color: var(--success);
+      font-weight: 600;
+    }
+    
+    .debit {
+      color: var(--error);
+      font-weight: 600;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--panel);
+      transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--green);
+      border: 2px solid var(--green);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--green);
+      color: white;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    
+    .alert-info {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+    }
+    
+    .alert-warning {
+      background: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fcd34d;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      color: var(--muted);
+    }
+    
+    @media (max-width: 768px) {
+      .welcome-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+      }
+      
+      .balance-display {
+        text-align: center;
+      }
+      
+      .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+      }
+      
+      .container {
+        padding: 16px;
+      }
+      
+      .header {
+        padding: 12px 16px;
+      }
+      
+      .header-brand {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-brand">
+      <div class="logo">N</div>
+      <span>NutriSteck Secure Banking</span>
+    </div>
+    <div class="header-actions">
+      <div class="user-info">
+        <p class="user-greeting">Welcome back,</p>
+        <p class="user-name" id="userName">Loading...</p>
+      </div>
+      <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="alert" class="alert" style="display: none;"></div>
+    
+    <!-- Account Status Check -->
+    <div id="pendingAlert" class="alert alert-warning" style="display: none;">
+      <strong>Account Pending Approval</strong><br>
+      Your account is currently under review. You'll receive access to full banking features once approved by our admin team.
+    </div>
+    
+    <!-- Welcome Card -->
+    <div class="welcome-card">
+      <div class="welcome-content">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>Manage your finances with confidence and security</p>
+      </div>
+      <div class="balance-display">
+        <p class="balance-label">Current Balance</p>
+        <p class="balance-amount" id="currentBalance">$0.00</p>
+      </div>
+    </div>
+
+    <!-- Banking Services -->
+    <div class="services-grid">
+      <div class="service-card" onclick="window.location.href='onboarding.html'">
+        <span class="icon">🎯</span>
+        <h3>Complete Setup</h3>
+        <p>Choose your account type and finish onboarding</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('Account Management')">
+        <span class="icon">🏦</span>
+        <h3>Account Management</h3>
+        <p>View and manage your accounts</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('Transfers')">
+        <span class="icon">💸</span>
+        <h3>Transfers</h3>
+        <p>Send money to other members</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('Bill Pay')">
+        <span class="icon">📄</span>
+        <h3>Bill Pay</h3>
+        <p>Pay bills online securely</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('Mobile Deposit')">
+        <span class="icon">📱</span>
+        <h3>Mobile Deposit</h3>
+        <p>Deposit checks with your phone</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('Zelle')">
+        <span class="icon">⚡</span>
+        <h3>Zelle</h3>
+        <p>Send money instantly</p>
+      </div>
+      <div class="service-card" onclick="showComingSoon('External Accounts')">
+        <span class="icon">🔗</span>
+        <h3>External Accounts</h3>
+        <p>Link external bank accounts</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Account Summary -->
+      <div class="card">
+        <h2>Account Summary</h2>
+        <div id="accountSummaryLoading" class="loading">Loading account information...</div>
+        <div id="accountSummary" style="display: none;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+            <div>
+              <h4 style="margin: 0 0 8px; color: var(--muted); font-size: 14px;">WITHDRAWABLE BALANCE</h4>
+              <p style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--success);" id="withdrawableBalance">$0.00</p>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 8px; color: var(--muted); font-size: 14px;">INTERNAL BALANCE</h4>
+              <p style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--green);" id="internalBalance">$0.00</p>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 8px; color: var(--muted); font-size: 14px;">PENDING TRANSACTIONS</h4>
+              <p style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--muted);" id="pendingCount">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!-- Recent Transactions -->
+<div class="card">
+  <h2>Recent Transactions</h2>
+  <div id="transactionsLoading" class="loading">Loading transaction history...</div>
+  <div id="transactionsEmpty" class="empty-state" style="display: none;">
+    <h3>No transactions yet</h3>
+    <p>Your transaction history will appear here once you start banking with us.</p>
+    <button class="btn btn-primary" onclick="showComingSoon('Funding')">Make Your First Deposit</button>
+  </div>
+  <div id="transactionsTable" style="display: none;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="transactionsList">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="margin-top:18px">
+  <h3>Banking Services</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:12px 0">
+    <a href="crypto-deposit.html" style="display:block;background:#e0f2fe;color:#0369a1;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      💎 Crypto Deposit
+    </a>
+    <a href="zelle.html" style="display:block;background:#ecfdf5;color:#059669;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      📱 Zelle
+    </a>
+    <a href="mobile-deposit.html" style="display:block;background:#fef3cd;color:#d97706;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      📷 Mobile Deposit
+    </a>
+    <a href="bill-pay.html" style="display:block;background:#f3e8ff;color:#7c3aed;padding:12px;border-radius:8px;text-decoration:none;text-align:center;font-weight:600">
+      💳 Bill Pay
+    </a>
+  </div>
+</div>
+
+<div style="margin-top:12px">
+  <button id="connectTelegram">Connect Telegram</button>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+const API_BASE = window.location.origin;
+let currentUser = null;
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', async () => {
+  // Use modular auth/data loading if present, else fallback to inline logic
+  if (typeof checkAuth === "function") await checkAuth();
+  if (typeof loadDashboardData === "function") await loadDashboardData();
+
+  // Inline fallback logic (if not modularized)
+  if (!window.checkAuth || !window.loadDashboardData) {
+    if(sessionStorage.getItem('rb_auth') !== '1'){ window.location.href='login.html'; }
+    const user = sessionStorage.getItem('rb_user') || 'Member';
+    document.getElementById('username').textContent = user;
+    const tx = [250,200.5,150,300.25,120,180,210.75,95];
+    let total=0; const txList=document.getElementById('txList');
+    tx.forEach((v,i)=>{ total+=v; const tr=document.createElement('tr'); tr.innerHTML=`<td>2025-0${8-i%8}-01</td><td>Member stock earnings</td><td class='credit'>$${v.toFixed(2)}</td>`; txList.appendChild(tr); });
+    document.getElementById('balance').textContent = '$' + total.toFixed(2);
+  }
+
+  // Show admin panel link for admin users
+  const user = sessionStorage.getItem('rb_user') || 'Member';
+  const adminUsers = ['admin', 'Lowkeyrich1413'];
+  if (adminUsers.includes(user)) {
+    const adminLink = document.createElement('div');
+    adminLink.style.marginTop = '16px';
+    adminLink.innerHTML = '<a href="admin-crypto.html" style="color:#dc2626;font-weight:600;text-decoration:none
+
+    });
+
+    async function checkAuth() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+
+        currentUser = await response.json();
+        
+        // Check if user is admin and redirect
+        if (currentUser.isAdmin) {
+          window.location.href = 'admin.html';
+          return;
+        }
+
+        // Update UI with user info
+        document.getElementById('userName').textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+        
+        // Show pending approval message if not active
+        if (!currentUser.isActive) {
+          document.getElementById('pendingAlert').style.display = 'block';
+        }
+        
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
+        window.location.href = 'login.html';
+      }
+    }
+
+    async function loadDashboardData() {
+      // For now, show demo data for approved users, placeholder for pending users
+      if (!currentUser.isActive) {
+        // Show placeholder data for pending users
+        document.getElementById('accountSummaryLoading').style.display = 'none';
+        document.getElementById('transactionsLoading').style.display = 'none';
+        document.getElementById('transactionsEmpty').style.display = 'block';
+        return;
+      }
+
+      // Demo data for approved users (in a real app, this would come from the API)
+      setTimeout(() => {
+        // Update balances with demo data
+        document.getElementById('currentBalance').textContent = '$1,506.50';
+        document.getElementById('withdrawableBalance').textContent = '$1,200.00';
+        document.getElementById('internalBalance').textContent = '$306.50';
+        document.getElementById('pendingCount').textContent = '0';
+        
+        // Show demo transactions
+        const transactions = [
+          { date: '2025-01-15', description: 'Member stock earnings', status: 'Completed', amount: '+$250.00', type: 'credit' },
+          { date: '2025-01-10', description: 'Member stock earnings', status: 'Completed', amount: '+$200.50', type: 'credit' },
+          { date: '2025-01-05', description: 'Member stock earnings', status: 'Completed', amount: '+$150.00', type: 'credit' },
+          { date: '2025-01-01', description: 'Welcome bonus', status: 'Completed', amount: '+$300.25', type: 'credit' }
+        ];
+        
+        displayTransactions(transactions);
+        
+        // Hide loading states
+        document.getElementById('accountSummaryLoading').style.display = 'none';
+        document.getElementById('accountSummary').style.display = 'block';
+        document.getElementById('transactionsLoading').style.display = 'none';
+        
+      }, 1000);
+    }
+
+    function displayTransactions(transactions) {
+      const transactionsList = document.getElementById('transactionsList');
+      const transactionsTable = document.getElementById('transactionsTable');
+      const transactionsEmpty = document.getElementById('transactionsEmpty');
+      
+      if (transactions.length === 0) {
+        transactionsEmpty.style.display = 'block';
+        return;
+      }
+      
+      transactionsList.innerHTML = transactions.map(transaction => `
+        <tr>
+          <td>${transaction.date}</td>
+          <td>${transaction.description}</td>
+          <td>
+            <span style="color: var(--success); font-weight: 500;">${transaction.status}</span>
+          </td>
+          <td class="${transaction.type}">${transaction.amount}</td>
+        </tr>
+      `).join('');
+      
+      transactionsTable.style.display = 'block';
+    }
+
+    function showComingSoon(feature) {
+      showAlert(`${feature} functionality will be available in the next update. Stay tuned!`, 'info');
+    }
+
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userInfo');
+      window.location.href = 'login.html';
+    }
+
+    function showAlert(message, type) {
+      const alert = document.getElementById('alert');
+      alert.textContent = message;
+      alert.className = `alert alert-${type}`;
+      alert.style.display = 'block';
+      
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
