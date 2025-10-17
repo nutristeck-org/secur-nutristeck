@@ -91,17 +91,20 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 /* ================================
-   LOGIN
+   LOGIN (Updated to handle email or username)
 ================================ */
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ error: "Email and password required." });
+  const { email, username, password } = req.body;
+  const loginId = email || username; // accept either email or username
+
+  if (!loginId || !password)
+    return res.status(400).json({ error: "Email or username and password required." });
 
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email=$1", [email]);
+    // Check if the user exists by either email or username
+    const result = await pool.query("SELECT * FROM users WHERE email=$1 OR username=$1", [loginId]);
     if (result.rows.length === 0)
-      return res.status(400).json({ error: "Invalid email or password." });
+      return res.status(400).json({ error: "Invalid email/username or password." });
 
     const user = result.rows[0];
 
@@ -110,7 +113,7 @@ router.post("/login", async (req, res) => {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid)
-      return res.status(400).json({ error: "Invalid email or password." });
+      return res.status(400).json({ error: "Invalid email/username or password." });
 
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
