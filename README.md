@@ -66,13 +66,26 @@ cp .env.example .env
 npm start
 ```
 
-## 🔐 Demo Credentials
+## 🔐 Getting Started
 
-For testing the login functionality, use these sample credentials:
+### Admin Access
+The system creates an admin account on first startup. Admin credentials must be set via environment variables:
 
-- **User ID:** `Lowkeyrich1413`
-- **Password:** `$SlimYellow1`
-- **PIN:** `1234`
+1. Copy `.env.production` to `.env` and set your secure admin password:
+```bash
+cp .env.production .env
+# Edit .env and set ADMIN_PASSWORD to a secure value
+```
+
+2. Start the server:
+```bash
+npm start
+```
+
+3. Login as admin with username `admin` and your configured password.
+
+### User Registration
+Real users can register through the system. New users require admin approval before they can access their accounts.
 
 ## 🛠️ Development
 

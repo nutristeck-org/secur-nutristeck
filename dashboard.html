@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Show admin panel link for admin users
   const user = sessionStorage.getItem('rb_user') || 'Member';
-  const adminUsers = ['admin', 'Lowkeyrich1413'];
+  const adminUsers = ['admin']; // Only allow the admin user
   if (adminUsers.includes(user)) {
     const adminLink = document.createElement('div');
     adminLink.style.marginTop = '16px';
