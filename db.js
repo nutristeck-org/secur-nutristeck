@@ -1,12 +1,19 @@
-require('dotenv').config();
-const { Pool } = require('pg');
+// =====================================
+// db.js — PostgreSQL Connection (Render)
+// =====================================
+require("dotenv").config();
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: process.env.PGUSER || 'postgres',
-  host: process.env.PGHOST || 'localhost',
-  database: process.env.PGDATABASE || 'nutristeck_secure',
-  password: process.env.PGPASSWORD || 'Yellow@1413@',
-  port: process.env.PGPORT || 5432,
+  connectionString: process.env.DATABASE_URL, // ✅ uses Render’s variable
+  ssl: {
+    rejectUnauthorized: false, // ✅ required for Render PostgreSQL
+  },
 });
+
+pool
+  .connect()
+  .then(() => console.log("✅ PostgreSQL connected successfully."))
+  .catch((err) => console.error("❌ PostgreSQL connection error:", err.message));
 
 module.exports = pool;
