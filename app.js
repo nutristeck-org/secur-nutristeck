@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // ================================
 // app.js - Main Server Entry (FINAL STABLE)
 // ================================
@@ -7,7 +6,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const pool = require("./db");
-const sendEmail = require("./mailer"); // ✅ FIXED: removed curly braces
+const sendEmail = require("./mailer");
 
 // Import routes
 const authRoutes = require("./routes/auth");
@@ -104,7 +103,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-=======
-// Minimal client script for the static demo
-console.log('NutriSteck Secure site loaded');
->>>>>>> a5c85d049e0b5665c9ffa442e510ffcbc0281bf2
