@@ -12,6 +12,7 @@ const sendEmail = require("./mailer");
 const authRoutes = require("./routes/auth");
 const testRoutes = require("./routes/testRoutes");
 
+const path = require("path");  // Add this line
 const app = express();
 
 // ================================
@@ -19,6 +20,11 @@ const app = express();
 // ================================
 app.use(express.json());
 app.use(cors());
+
+// ================================
+// 🧩 Serve Frontend Files (static files)
+// ================================
+app.use(express.static(path.join(__dirname, "public")));  // Add this line
 
 // ================================
 // 🧠 Verify DB Connection
@@ -66,7 +72,7 @@ app.use("/api", testRoutes);
 
       await pool.query(
         `INSERT INTO users (name, username, email, password, pin_hash, role, is_verified)
-         VALUES ($1, $2, $3, $4, $5, $6, true)`,
+         VALUES ($1,$2,$3,$4,$5,$6,true)`,
         [
           "System Administrator",
           "superadmin",
