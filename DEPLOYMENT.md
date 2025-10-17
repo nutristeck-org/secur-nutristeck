@@ -166,11 +166,15 @@ INTERNAL_TOKEN=your-internal-api-token
 PORT=3000
 ```
 
-### 2. Demo Credentials Replacement
-Current demo credentials (replace in production):
-- **User ID:** `Lowkeyrich1413`
-- **Password:** `$SlimYellow1`
-- **PIN:** `1234`
+### 2. Admin Account Security
+Admin account is automatically created on server startup with credentials from environment variables:
+- **Username:** `admin` (fixed)
+- **Password:** Set via `ADMIN_PASSWORD` environment variable (required in production)
+
+Ensure your admin password meets security requirements:
+- Minimum 12 characters
+- Mix of letters, numbers, and special characters
+- Not easily guessable
 
 ### 3. Data Storage
 - Current: JSON files in `./data/` directory
