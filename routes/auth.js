@@ -91,18 +91,23 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 /* ================================
-   LOGIN (Updated to handle email or username)
+   LOGIN (Username or Email)
 ================================ */
 router.post("/login", async (req, res) => {
   const { email, username, password } = req.body;
-  const loginId = email || username; // accept either email or username
 
-  if (!loginId || !password)
-    return res.status(400).json({ error: "Email or username and password required." });
+  // Use whichever one is provided
+  const identifier = email || username;
+  if (!identifier || !password)
+    return res.status(400).json({ error: "Email/Username and password required." });
 
   try {
-    // Check if the user exists by either email or username
-    const result = await pool.query("SELECT * FROM users WHERE email=$1 OR username=$1", [loginId]);
+    // Find user by email OR username
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email=$1 OR username=$1",
+      [identifier]
+    );
+
     if (result.rows.length === 0)
       return res.status(400).json({ error: "Invalid email/username or password." });
 
@@ -137,19 +142,13 @@ router.post("/login", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        isAdmin: user.role === "admin",
       },
     });
   } catch (err) {
     console.error("❌ Login Error:", err.message);
     res.status(500).json({ error: "Server error during login." });
   }
-});
-
-/* ================================
-   ADMIN ROUTE
-================================ */
-router.get("/admin", authenticateToken, authorizeRoles("admin"), (req, res) => {
-  res.send("Welcome Admin! You have full access.");
 });
 
 /* ================================
